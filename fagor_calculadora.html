@@ -673,10 +673,10 @@ async function loadSheetData() {
   showLoadingOverlay(true);
   try {
     const [csvModels, csvTarifas, csvPaises, csvParams] = await Promise.all([
-      fetch(sheetURL('1_Modelos_Fagor')).then(r => r.text()),
-      fetch(sheetURL('2_Tarifas_y_Precios')).then(r => r.text()),
-      fetch(sheetURL('3_Paises_Tarifa')).then(r => r.text()),
-      fetch(sheetURL('4_Parametros_Calculo')).then(r => r.text()),
+      fetch(csvURL('1_Modelos_Fagor')).then(r => r.text()),
+      fetch(csvURL('2_Tarifas_y_Precios')).then(r => r.text()),
+      fetch(csvURL('3_Paises_Tarifa')).then(r => r.text()),
+      fetch(csvURL('4_Parametros_Calculo')).then(r => r.text()),
     ]);
     parseModels(csvModels);
     parseTarifas(csvTarifas);

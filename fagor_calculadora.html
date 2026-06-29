@@ -4,1856 +4,1514 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora ROI — Fagor Industrial</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-/* ── RESET & BASE ─────────────────────────────────────────── */
+/* ── RESET ─────────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --blue-900:#0f2557;--blue-800:#1a3a7c;--blue-600:#1d4ed8;--blue-400:#378ADD;--blue-100:#dbeafe;--blue-50:#eff6ff;
-  --green-700:#047857;--green-600:#059669;--green-100:#d1fae5;
-  --red-600:#dc2626;--red-100:#fee2e2;
-  --amber-700:#b45309;--amber-100:#fef3c7;
-  --purple-700:#6d28d9;--purple-100:#ede9fe;
-  --gray-900:#111827;--gray-700:#374151;--gray-500:#6b7280;--gray-300:#d1d5db;--gray-200:#e5e7eb;--gray-100:#f3f4f6;--gray-50:#f9fafb;
+  --black:#0a0a0a;
+  --gray-900:#1a1a1a;
+  --gray-800:#2d2d2d;
+  --gray-700:#404040;
+  --gray-600:#595959;
+  --gray-500:#737373;
+  --gray-400:#999;
+  --gray-300:#c4c4c4;
+  --gray-200:#e0e0e0;
+  --gray-100:#f0f0f0;
+  --gray-50:#f7f7f7;
   --white:#ffffff;
-  --radius-sm:6px;--radius:10px;--radius-lg:14px;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow:0 2px 8px rgba(0,0,0,.08);
-  --font:system-ui,-apple-system,'Segoe UI',sans-serif;
+  --red:#c0392b;
+  --red-light:#fdf0ef;
+  --red-dark:#96231a;
+  --green:#1a7a4a;
+  --green-light:#edf7f1;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --r:6px;--r-lg:10px;
+  --sh:0 1px 4px rgba(0,0,0,.08);
+  --sh-md:0 2px 12px rgba(0,0,0,.1);
 }
-body{font-family:var(--font);background:#f0f2f6;color:var(--gray-900);min-height:100vh;font-size:14px;line-height:1.5}
+body{font-family:var(--font);background:var(--gray-50);color:var(--gray-900);min-height:100vh;font-size:14px;line-height:1.5}
 
-/* ── LAYOUT ──────────────────────────────────────────────── */
-.page{max-width:1160px;margin:0 auto;padding:1.5rem}
-.section-mb{margin-bottom:1.25rem}
-.card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.1rem 1.25rem;box-shadow:var(--shadow-sm)}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.g5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-@media(max-width:720px){.g4,.g5{grid-template-columns:1fr 1fr}.g2,.g3{grid-template-columns:1fr}}
+/* ── LAYOUT ─────────────────────────────────────────────── */
+.wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
 
-/* ── LANGUAGE BUTTONS ────────────────────────── */
-.lang-btn{height:30px;padding:0 10px;border:1px solid rgba(255,255,255,.3);border-radius:var(--radius-sm);background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
-.lang-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.5)}
-.lang-btn.active{background:rgba(255,255,255,.25);border-color:#fff;color:#fff}
+/* ── HEADER ─────────────────────────────────────────────── */
+.site-header{background:var(--black);color:var(--white);padding:0 1.5rem}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:32px;height:32px;border:1.5px solid var(--white);border-radius:4px;display:flex;align-items:center;justify-content:center}
+.logo-text{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.logo-sub{font-size:11px;opacity:.45;letter-spacing:.04em;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:8px}
+.lang-btn{height:28px;padding:0 10px;border:1px solid rgba(255,255,255,.2);border-radius:var(--r);background:transparent;color:rgba(255,255,255,.6);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.03em}
+.lang-btn:hover,.lang-btn.active{border-color:rgba(255,255,255,.6);color:var(--white)}
+.master-trigger{width:28px;height:28px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.3;transition:opacity .15s;color:var(--white)}
+.master-trigger:hover{opacity:.7}
 
-/* ── HEADER ──────────────────────────────────────────────── */
-.header-band{background:linear-gradient(135deg,var(--blue-900) 0%,var(--blue-600) 100%);color:var(--white);padding:1.25rem 1.5rem;border-radius:var(--radius-lg);margin-bottom:1.5rem;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
-.header-band h1{font-size:18px;font-weight:700;letter-spacing:-.01em}
-.header-band p{font-size:12px;opacity:.75;margin-top:3px}
+/* ── PAGE TITLE ─────────────────────────────────────────── */
+.page-title{padding:2rem 0 1.5rem}
+.page-title h1{font-size:22px;font-weight:700;color:var(--gray-900);letter-spacing:-.02em}
+.page-title p{font-size:13px;color:var(--gray-500);margin-top:4px}
 
-/* ── SECTION LABELS ──────────────────────────────────────── */
-.sec-title{font-size:10.5px;font-weight:700;color:var(--gray-500);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.sec-title .icon{font-size:13px}
+/* ── SECTION ─────────────────────────────────────────────── */
+.section{margin-bottom:1.5rem}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+.section-num{width:22px;height:22px;border-radius:50%;background:var(--gray-900);color:var(--white);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-title{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-600)}
+.card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:1.25rem;box-shadow:var(--sh)}
 
-/* ── FORM FIELDS ─────────────────────────────────────────── */
-.fld{display:flex;flex-direction:column;gap:4px}
-.fld label{font-size:11.5px;color:var(--gray-500);font-weight:500;line-height:1.3}
-.fld input,.fld select{height:36px;border:1px solid var(--gray-300);border-radius:var(--radius-sm);background:var(--gray-50);color:var(--gray-900);font-size:13px;padding:0 10px;transition:border .15s,background .15s;font-family:var(--font)}
-.fld input:focus,.fld select:focus{outline:none;border-color:var(--blue-400);background:var(--white);box-shadow:0 0 0 3px rgba(55,138,221,.12)}
-.fld input:disabled{opacity:.4;cursor:not-allowed;background:var(--gray-100)}
-.fld .field-note{font-size:10.5px;color:var(--gray-500);margin-top:2px;line-height:1.4}
+/* ── FORM ───────────────────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:700px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
 
-/* ── TOGGLE BUTTONS ──────────────────────────────────────── */
-.tog{display:flex;gap:6px}
-.tb{flex:1;height:36px;border:1px solid var(--gray-300);border-radius:var(--radius-sm);background:var(--gray-50);color:var(--gray-500);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500;font-family:var(--font)}
-.tb.on{border-color:var(--blue-400);background:var(--blue-100);color:var(--blue-600);font-weight:600}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11.5px;font-weight:600;color:var(--gray-600);letter-spacing:.01em;display:flex;align-items:center;gap:4px}
+.req{color:var(--red);font-size:12px;line-height:1}
+.field input,.field select{height:38px;border:1px solid var(--gray-200);border-radius:var(--r);background:var(--white);color:var(--gray-900);font-size:13px;padding:0 10px;font-family:var(--font);transition:border .15s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gray-900)}
+.field input:disabled,.field select:disabled{background:var(--gray-50);color:var(--gray-400);cursor:not-allowed}
+.field input[readonly]{background:var(--gray-50);color:var(--gray-500)}
+.field .hint{font-size:11px;color:var(--gray-400);line-height:1.4}
+.field-note-admin{font-size:11px;color:var(--gray-400);font-style:italic;margin-top:2px}
 
-/* ── MASTER BAR ──────────────────────────────────────────── */
-.master-bar{display:flex;align-items:center;gap:10px;padding:.7rem 1.1rem;border:1px solid var(--gray-200);border-radius:var(--radius-lg);margin-bottom:1.25rem;background:var(--white);box-shadow:var(--shadow-sm);flex-wrap:wrap}
-.master-bar label{font-size:12.5px;color:var(--gray-500);flex:1;min-width:180px}
-.master-bar input[type=password]{width:170px;height:32px;border:1px solid var(--gray-300);border-radius:var(--radius-sm);background:var(--gray-50);color:var(--gray-900);font-size:13px;padding:0 10px;font-family:var(--font)}
-.btn-sm{height:32px;padding:0 14px;border:1px solid var(--gray-300);border-radius:var(--radius-sm);background:var(--white);color:var(--gray-700);font-size:12.5px;cursor:pointer;font-weight:500;transition:all .15s;font-family:var(--font)}
-.btn-sm:hover{background:var(--gray-100);border-color:var(--gray-400)}
-.btn-sm.btn-primary{background:var(--blue-600);border-color:var(--blue-600);color:var(--white)}
-.btn-sm.btn-primary:hover{background:var(--blue-800);border-color:var(--blue-800)}
-.btn-sm.btn-danger{background:var(--red-600);border-color:var(--red-600);color:var(--white)}
-.master-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--amber-100);color:var(--amber-700)}
-.locked-note{font-size:10.5px;color:var(--gray-400);margin-top:2px;display:flex;align-items:center;gap:4px;font-style:italic}
+/* ── TOGGLE ─────────────────────────────────────────────── */
+.toggle-group{display:flex;gap:1px;background:var(--gray-200);border-radius:var(--r);padding:2px}
+.tg-btn{flex:1;height:34px;border:none;border-radius:4px;background:transparent;color:var(--gray-500);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
+.tg-btn.on{background:var(--white);color:var(--gray-900);box-shadow:var(--sh)}
 
-/* ── CHIPS ───────────────────────────────────────────────── */
-.chip{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:5px;vertical-align:middle;letter-spacing:.02em}
-.chip-new{background:var(--green-100);color:var(--green-700)}
-.chip-old{background:var(--amber-100);color:var(--amber-700)}
-.chip-comp{background:var(--purple-100);color:var(--purple-700)}
-.chip-opt{background:var(--gray-100);color:var(--gray-500)}
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.btn{height:36px;padding:0 16px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font);display:inline-flex;align-items:center;gap:6px;border:1px solid transparent}
+.btn-primary{background:var(--gray-900);color:var(--white);border-color:var(--gray-900)}
+.btn-primary:hover{background:var(--black)}
+.btn-secondary{background:var(--white);color:var(--gray-700);border-color:var(--gray-200)}
+.btn-secondary:hover{border-color:var(--gray-400);color:var(--gray-900)}
+.btn-danger{background:var(--white);color:var(--red);border-color:var(--gray-200)}
+.btn-danger:hover{border-color:var(--red);background:var(--red-light)}
+.btn-ghost{background:transparent;border-color:var(--gray-200);color:var(--gray-600)}
+.btn-ghost:hover{background:var(--gray-50);border-color:var(--gray-300)}
+.btn-sm{height:30px;padding:0 12px;font-size:12px}
+.btn-add{height:38px;padding:0 16px;border:1px dashed var(--gray-300);border-radius:var(--r);background:transparent;color:var(--gray-500);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-add:hover{border-color:var(--gray-500);color:var(--gray-700);background:var(--gray-50)}
 
-/* ── METRIC CARDS ────────────────────────────────────────── */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-@media(max-width:720px){.metrics{grid-template-columns:1fr 1fr}}
-.mcard{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:.9rem;text-align:center;box-shadow:var(--shadow-sm)}
-.mlbl{font-size:10.5px;color:var(--gray-400);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.mval{font-size:22px;font-weight:700;color:var(--gray-900);line-height:1.1}
-.mval.pos{color:var(--green-600)}.mval.neg{color:var(--red-600)}
-.msub{font-size:10.5px;color:var(--gray-400);margin-top:3px}
+/* ── SVG ICONS ──────────────────────────────────────────── */
+.icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── MASTER PANEL ───────────────────────────────────────── */
+.master-bar{display:none;background:var(--gray-900);color:var(--white);padding:.75rem 1.5rem;gap:12px;align-items:center;flex-wrap:wrap}
+.master-bar.visible{display:flex}
+.master-bar label{font-size:12px;color:rgba(255,255,255,.6);flex:1}
+.master-bar input[type=password]{height:32px;border:1px solid rgba(255,255,255,.2);border-radius:var(--r);background:transparent;color:var(--white);font-size:13px;padding:0 10px;width:180px;font-family:var(--font)}
+.master-bar input[type=password]::placeholder{color:rgba(255,255,255,.3)}
+.master-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2)}
+
+.master-panel{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);margin-bottom:1.5rem;overflow:hidden}
+.master-panel-header{background:var(--gray-900);color:var(--white);padding:.75rem 1.25rem;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.master-panel-body{padding:1.25rem}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--gray-200);margin-bottom:1.25rem}
+.tab-btn{padding:8px 16px;font-size:12px;font-weight:600;color:var(--gray-500);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--font);transition:all .15s}
+.tab-btn.active{color:var(--gray-900);border-bottom-color:var(--gray-900)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* ── EDIT TABLE ─────────────────────────────────────────── */
+.edit-table{width:100%;border-collapse:collapse;font-size:12px}
+.edit-table th{font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;padding:6px 8px;border-bottom:2px solid var(--gray-100);text-align:left;background:var(--gray-50)}
+.edit-table td{padding:4px 6px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+.edit-table input,.edit-table select{height:28px;border:1px solid var(--gray-200);border-radius:4px;background:var(--white);font-size:12px;padding:0 6px;width:100%;font-family:var(--font)}
+.edit-table input:focus,.edit-table select:focus{outline:none;border-color:var(--gray-600)}
+.del-btn{width:24px;height:24px;border:none;background:none;color:var(--gray-300);cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.del-btn:hover{color:var(--red);background:var(--red-light)}
+
+/* ── MODEL CARD ─────────────────────────────────────────── */
+.model-card{border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:1rem;background:var(--white);margin-bottom:.75rem;transition:border .15s}
+.model-card.ref-card{border-color:var(--gray-900);border-width:1.5px}
+.model-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.model-tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+.tag-fagor{background:var(--gray-900);color:var(--white)}
+.tag-comp{background:var(--gray-100);color:var(--gray-600)}
+.tag-ref{background:var(--red);color:var(--white)}
+.card-actions{display:flex;gap:4px}
+.icon-btn{width:28px;height:28px;border:1px solid var(--gray-200);border-radius:var(--r);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--gray-500)}
+.icon-btn:hover{border-color:var(--gray-400);color:var(--gray-900)}
+.icon-btn.del-ico:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+
+/* ── ADD BUTTONS ROW ─────────────────────────────────────── */
+.add-row{display:flex;gap:8px;margin-top:.5rem}
+
+/* ── COMP TABLE ─────────────────────────────────────────── */
+.table-wrap{overflow-x:auto}
+.comp-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.comp-table th{font-size:10.5px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;border-bottom:2px solid var(--gray-200);text-align:right;white-space:nowrap;background:var(--gray-50)}
+.comp-table th:first-child{text-align:left}
+.comp-table td{padding:9px 12px;border-bottom:1px solid var(--gray-100);text-align:right;color:var(--gray-800);white-space:nowrap}
+.comp-table td:first-child{text-align:left;font-weight:600;color:var(--gray-900)}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table tr.row-ref td{background:#fafafa}
+.pos{color:var(--green);font-weight:700}
+.neg{color:var(--red);font-weight:700}
+.ref-label::after{content:' ★';font-size:10px;color:var(--gray-400)}
+
+/* ── METRICS ─────────────────────────────────────────────── */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1rem}
+@media(max-width:700px){.metrics-grid{grid-template-columns:1fr 1fr}}
+.metric-card{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:1rem;text-align:center}
+.metric-label{font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.metric-val{font-size:24px;font-weight:700;color:var(--gray-900);line-height:1}
+.metric-val.pos{color:var(--green)}
+.metric-val.neg{color:var(--red)}
+.metric-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
 
 /* ── DETAIL ROWS ─────────────────────────────────────────── */
-.sr{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--gray-100);font-size:13px}
-.sr:last-child{border-bottom:none}
-.sr .lbl{color:var(--gray-500);display:flex;align-items:center;gap:6px}
-.sr .val{font-weight:600}
-.val.pos{color:var(--green-600)}.val.neg{color:var(--red-600)}
-.divider{border:none;border-top:1px solid var(--gray-100);margin:.6rem 0}
-
-/* ── CHART ───────────────────────────────────────────────── */
-.chart-wrap{position:relative;height:190px;margin-top:1rem}
-.note{font-size:11px;color:var(--gray-400);margin-top:8px;line-height:1.6}
-
-/* ── COMP BLOCKS ─────────────────────────────────────────── */
-.comp-block{border:1px solid var(--gray-200);border-radius:var(--radius);padding:.85rem;margin-bottom:10px;background:var(--gray-50)}
-.comp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.comp-name{font-size:13px;font-weight:600;color:var(--gray-700)}
-.comp-actions{display:flex;gap:6px;align-items:center}
-.icon-btn{width:30px;height:30px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;color:var(--gray-500)}
-.icon-btn:hover{background:var(--gray-100);border-color:var(--gray-300)}
-.icon-btn.del:hover{background:var(--red-100);border-color:var(--red-600);color:var(--red-600)}
-.icon-btn.edit:hover{background:var(--blue-50);border-color:var(--blue-400);color:var(--blue-600)}
-.btn-add{display:flex;align-items:center;gap:6px;height:36px;padding:0 16px;border:1px dashed var(--gray-300);border-radius:var(--radius-sm);background:transparent;color:var(--gray-500);font-size:13px;cursor:pointer;transition:all .15s;font-weight:500;font-family:var(--font)}
-.btn-add:hover{background:var(--gray-100);border-color:var(--gray-400)}
-
-/* ── COMPARISON TABLE ────────────────────────────────────── */
-.comp-results-wrap{overflow-x:auto;margin-top:.5rem}
-.comp-table{width:100%;border-collapse:collapse;font-size:12px}
-.comp-table th{font-weight:700;color:var(--gray-500);padding:8px 10px;border-bottom:2px solid var(--gray-200);text-align:right;white-space:nowrap;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
-.comp-table th:first-child{text-align:left}
-.comp-table td{padding:7px 10px;border-bottom:1px solid var(--gray-100);color:var(--gray-900);text-align:right;white-space:nowrap}
-.comp-table td:first-child{text-align:left;font-weight:600}
-.comp-table tr.fagor-row td{background:#f0fdf4}
-.comp-table tr.fagor-row td:first-child::after{content:' ★';color:var(--green-600);font-size:10px}
-.td-pos{color:var(--green-600);font-weight:700}.td-neg{color:var(--red-600);font-weight:700}
-
-/* ── ROW HEADER ──────────────────────────────────────────── */
-.row-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.row-hd h3{font-size:14px;font-weight:700;color:var(--gray-900)}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--gray-100);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.detail-lbl{color:var(--gray-500);font-size:13px}
+.detail-val{font-weight:600;font-size:13px}
 
 /* ── ICEBERG ─────────────────────────────────────────────── */
-.iceberg-wrap{display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap}
-.iceberg-canvas-wrap{flex:0 0 340px;min-width:260px}
-.iceberg-legend{flex:1;min-width:200px}
-.iceberg-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-100)}
-.iceberg-item:last-child{border-bottom:none}
-.iceberg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.iceberg-item-label{font-size:12.5px;color:var(--gray-700);flex:1}
-.iceberg-item-val{font-size:13px;font-weight:700;color:var(--gray-900);text-align:right}
-.iceberg-item-pct{font-size:11px;color:var(--gray-400);text-align:right;min-width:38px}
+.iceberg-wrap{display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap}
+.iceberg-svg-wrap{flex:0 0 300px}
+.iceberg-legend{flex:1;min-width:220px}
+.ice-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--gray-100)}
+.ice-item:last-child{border-bottom:none}
+.ice-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.ice-lbl{font-size:12.5px;color:var(--gray-700);flex:1}
+.ice-sublbl{font-size:10.5px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em}
+.ice-val{font-size:13px;font-weight:700;color:var(--gray-900);text-align:right}
+.ice-pct{font-size:11px;color:var(--gray-400);text-align:right;min-width:34px}
 
-/* ── MASTER PANEL ────────────────────────────────────────── */
-.master-panel{border:2px solid var(--amber-100);border-radius:var(--radius-lg);padding:1rem 1.25rem;background:#fffbeb;margin-bottom:1.25rem}
-.master-panel-title{font-size:11px;font-weight:700;color:var(--amber-700);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.table-edit{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:10px}
-.table-edit th{font-size:10.5px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;border-bottom:2px solid var(--gray-200);text-align:left;background:var(--gray-50)}
-.table-edit td{padding:5px 6px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
-.table-edit input,.table-edit select{height:30px;border:1px solid var(--gray-300);border-radius:var(--radius-sm);background:var(--white);font-size:12px;padding:0 7px;width:100%;font-family:var(--font)}
-.table-edit input:focus,.table-edit select:focus{outline:none;border-color:var(--blue-400)}
-.btn-table-add{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 12px;border:1px dashed var(--gray-300);border-radius:var(--radius-sm);background:transparent;color:var(--gray-500);font-size:12px;cursor:pointer;font-family:var(--font);transition:all .15s}
-.btn-table-add:hover{background:var(--gray-100)}
-.btn-table-del{width:26px;height:26px;border:none;background:none;color:var(--gray-300);cursor:pointer;font-size:15px;border-radius:4px;transition:color .15s;display:flex;align-items:center;justify-content:center}
-.btn-table-del:hover{color:var(--red-600);background:var(--red-100)}
+/* ── DIVIDER ─────────────────────────────────────────────── */
+.divider{border:none;border-top:1px solid var(--gray-100);margin:.75rem 0}
 
-/* ── PRINT ───────────────────────────────────────────────── */
-.print-btn-wrap{display:flex;justify-content:flex-end;margin-bottom:1rem}
+/* ── NOTE ───────────────────────────────────────────────── */
+.note{font-size:11px;color:var(--gray-400);line-height:1.6;margin-top:.5rem}
+
+/* ── PRINT ──────────────────────────────────────────────── */
 @media print{
-  .master-bar,.master-panel,.btn-add,.btn-sm,.print-btn-wrap,.comp-block .comp-actions,
-  #comp_list,.sec-title .icon{display:none!important}
-  .page{padding:0;max-width:100%}
-  body{background:white;font-size:12px}
-  .card{box-shadow:none;border-color:#ddd;break-inside:avoid}
-  .header-band{background:#1a3a7c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .print-only{display:block!important}
+  .site-header,.master-bar,.master-panel,.add-row,.icon-btn,.btn-add,
+  .no-print,.page-title .btn{display:none!important}
+  body{background:white}
+  .card{box-shadow:none;break-inside:avoid}
 }
-.print-only{display:none}
 
-/* ── DISTRIBUTOR INFO ────────────────────────────────────── */
-.dist-info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:.75rem 0;border-bottom:1px solid var(--gray-100);margin-bottom:.75rem}
-@media(max-width:720px){.dist-info{grid-template-columns:1fr}}
-
-/* ── TABS ────────────────────────────────────────────────── */
-.tabs{display:flex;gap:4px;margin-bottom:1rem;border-bottom:2px solid var(--gray-200)}
-.tab{padding:8px 14px;font-size:13px;font-weight:600;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font)}
-.tab.active{color:var(--blue-600);border-bottom-color:var(--blue-600)}
-.tab-panel{display:none}.tab-panel.active{display:block}
-</style>
+/* ── LOADING ─────────────────────────────────────────────── */
+#loading-overlay{position:fixed;inset:0;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:var(--white);gap:20px}
+.load-bar{width:180px;height:2px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+.load-bar-inner{width:100%;height:100%;background:var(--white);border-radius:2px;animation:ldbar 1.6s ease-in-out infinite}
+@keyframes ldbar{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}</style>
 </head>
 <body>
 
-<div class="page">
+<!-- LOADING -->
+<div id="loading-overlay">
+  <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="1" y="1" width="34" height="34" rx="4" stroke="white" stroke-width="1.5"/><path d="M10 18h16M10 12h10M10 24h13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+  <div style="font-size:14px;font-weight:600;letter-spacing:.04em" data-i18n="loading">Cargando datos...</div>
+  <div class="load-bar"><div class="load-bar-inner"></div></div>
+</div>
 
 <!-- HEADER -->
-<div class="header-band">
-  <div style="font-size:32px">🍽️</div>
-  <div>
-    <h1 data-i18n="header_title">Calculadora ROI — Fagor Industrial</h1>
-    <p data-i18n="header_sub">Comparativa de ahorro operativo y análisis de retorno de inversión</p>
-  </div>
-  <div style="margin-left:auto;display:flex;gap:6px">
-    <button class="lang-btn active" id="lang_es" onclick="setLang('es')">🇪🇸 ES</button>
-    <button class="lang-btn" id="lang_en" onclick="setLang('en')">🇬🇧 EN</button>
-    <button class="lang-btn" id="lang_fr" onclick="setLang('fr')">🇫🇷 FR</button>
-  </div>
-</div>
-
-<!-- MASTER BAR -->
-<div class="master-bar" id="master_bar" style="display:none">
-  <span style="font-size:18px">⚙️</span>
-  <label id="master_label">Modo comercial activo</label>
-  <span id="master_badge_wrap" style="display:none"><span class="master-badge">🔓 Modo master</span></span>
-  <input type="password" id="master_pwd" placeholder="Contraseña master" style="display:none">
-  <button class="btn-sm" id="btn_master_toggle" onclick="toggleMasterInput()">Acceso master</button>
-  <button class="btn-sm btn-primary" id="btn_master_ok" style="display:none" onclick="tryMaster()">Entrar</button>
-  <button class="btn-sm btn-danger" id="btn_master_exit" style="display:none" onclick="exitMaster()">Salir del modo master</button>
-</div>
-
-<!-- MASTER PANEL (hidden until master mode) -->
-<div id="master_panel" style="display:none">
-  <div class="master-panel">
-    <div class="master-panel-title">⚙️ Panel de administración — solo visible en modo master</div>
-
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('tab_models')">Modelos Fagor</button>
-      <button class="tab" onclick="switchTab('tab_tarifas')">Tarifas y precios</button>
-      <button class="tab" onclick="switchTab('tab_paises')">Países y parámetros</button>
-      <button class="tab" onclick="switchTab('tab_pass')">Contraseña</button>
-    </div>
-
-    <!-- TAB: MODELOS -->
-    <div id="tab_models" class="tab-panel active">
-      <p style="font-size:12px;color:var(--gray-500);margin-bottom:10px">Gestiona los modelos Fagor disponibles en el selector. Tanque en litros, producción en cestas/h, consumo de agua en l/h.</p>
-      <div style="margin-bottom:12px">
-        <div style="font-size:11px;font-weight:700;color:var(--blue-600);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Gama nueva (WRC / WRA)</div>
-        <div id="models_nuevo_wrap"></div>
-        <button class="btn-table-add" onclick="addModelRow('nuevo')">+ Añadir modelo nuevo</button>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M3 5h8M3 13h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
       <div>
-        <div style="font-size:11px;font-weight:700;color:var(--amber-700);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Gama anterior (CCO)</div>
-        <div id="models_viejo_wrap"></div>
-        <button class="btn-table-add" onclick="addModelRow('viejo')">+ Añadir modelo anterior</button>
+        <div class="logo-text">Fagor Industrial</div>
+        <div class="logo-sub" data-i18n="header_sub">Calculadora ROI</div>
       </div>
     </div>
-
-    <!-- TAB: TARIFAS -->
-    <div id="tab_tarifas" class="tab-panel">
-      <p style="font-size:12px;color:var(--gray-500);margin-bottom:10px">Define las tarifas de precios para cada gama de modelos. Añade todas las tarifas necesarias (por mercado, canal, etc.).</p>
-      <div id="tarifas_wrap"></div>
-      <button class="btn-table-add" onclick="addTarifaRow()">+ Añadir tarifa</button>
-    </div>
-
-    <!-- TAB: PAÍSES -->
-    <div id="tab_paises" class="tab-panel">
-      <p style="font-size:12px;color:var(--gray-500);margin-bottom:10px">Asocia cada país a una tarifa y define sus parámetros energéticos locales por defecto.</p>
-      <div id="paises_wrap"></div>
-      <button class="btn-table-add" onclick="addPaisRow()">+ Añadir país</button>
-    </div>
-
-    <!-- TAB: CONTRASEÑA -->
-    <div id="tab_pass" class="tab-panel">
-      <p style="font-size:12px;color:var(--gray-500);margin-bottom:10px">Cambia la contraseña de acceso al modo master.</p>
-      <div class="g3" style="max-width:500px">
-        <div class="fld"><label>Contraseña actual</label><input type="password" id="pass_old" placeholder="••••••••"></div>
-        <div class="fld"><label>Nueva contraseña</label><input type="password" id="pass_new1" placeholder="••••••••"></div>
-        <div class="fld"><label>Repetir nueva</label><input type="password" id="pass_new2" placeholder="••••••••"></div>
-      </div>
-      <button class="btn-sm btn-primary" style="margin-top:10px" onclick="changePass()">Cambiar contraseña</button>
-      <span id="pass_msg" style="font-size:12px;margin-left:10px;color:var(--green-600)"></span>
-
-      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--amber-100)">
-        <div style="font-size:12px;font-weight:700;color:var(--amber-700);margin-bottom:8px">🔄 Datos de Google Sheets</div>
-        <p style="font-size:12px;color:var(--gray-500);margin-bottom:10px">Si has actualizado el Excel en Google Drive y quieres que la calculadora cargue los cambios sin recargar la página.</p>
-        <button class="btn-sm btn-primary" onclick="reloadSheetData()">🔄 Recargar datos ahora</button>
-        <span id="reload_msg" style="font-size:12px;margin-left:10px;color:var(--green-600)"></span>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ① DISTRIBUIDOR (print only visible) -->
-<div class="section-mb print-only" id="dist_print_wrap">
-  <div class="sec-title"><span class="icon">📋</span>Datos del distribuidor</div>
-  <div class="card">
-    <div class="dist-info" id="dist_info_print"></div>
-  </div>
-</div>
-
-<!-- ① PAÍS Y DISTRIBUIDOR -->
-<div class="section-mb">
-  <div class="sec-title"><span class="icon">🌍</span><span data-i18n="sec_pais">País y distribuidor</span></div>
-  <div class="card">
-    <div class="g4" style="margin-bottom:10px">
-      <div class="fld">
-        <label data-i18n="lbl_pais">País del cliente</label>
-        <select id="sel_pais" onchange="onPaisChange()"></select>
-      </div>
-      <div class="fld">
-        <label data-i18n="lbl_tarifa_aplicada">Tarifa aplicada</label>
-        <input type="text" id="tarifa_display" readonly style="background:var(--gray-100);color:var(--gray-500)">
-      </div>
-      <div class="fld">
-        <label data-i18n="lbl_dto_fagor">Descuento Fagor (%)</label>
-        <input type="number" id="dto_fagor" value="50" step="0.1" min="0" max="100" oninput="calc()">
-        <span class="field-note" data-i18n="note_dto_fagor">Base: 50%. Acepta decimales.</span>
-      </div>
-    </div>
-    <div class="g4">
-      <div class="fld"><label data-i18n="lbl_dist_nombre">Nombre distribuidor</label><input type="text" id="dist_nombre" placeholder="Ej: Distribuciones ABC" oninput="updateDistPrint()"></div>
-      <div class="fld"><label data-i18n="lbl_contacto">Contacto</label><input type="text" id="dist_contacto" placeholder="Nombre del contacto" oninput="updateDistPrint()"></div>
-      <div class="fld"><label data-i18n="lbl_email">Email / Teléfono</label><input type="text" id="dist_email" placeholder="email@empresa.com" oninput="updateDistPrint()"></div>
-      <div class="fld"><label data-i18n="lbl_fecha">Fecha</label><input type="date" id="dist_fecha" oninput="updateDistPrint()"></div>
+    <div class="header-right">
+      <button class="lang-btn active" id="lang_es" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" id="lang_en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="lang_fr" onclick="setLang('fr')">FR</button>
+      <button class="master-trigger" id="master-trigger" onclick="toggleMasterBar()" title="Admin">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </div>
+</header>
+
+<!-- MASTER BAR -->
+<div class="master-bar" id="master-bar">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7 9l-3 1.5.5-3.5L2 4.5 5.5 4z" stroke="white" stroke-width="1.2"/></svg>
+  <label id="master-label">Modo comercial</label>
+  <span id="master-badge" style="display:none" class="master-badge">Master activo</span>
+  <input type="password" id="master-pwd" placeholder="Contraseña" style="display:none">
+  <button class="btn btn-sm" id="btn-master-enter" style="display:none;background:white;color:var(--gray-900)" onclick="tryMaster()" data-i18n="btn_enter">Entrar</button>
+  <button class="btn btn-sm btn-danger" id="btn-master-exit" style="display:none;border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7);background:transparent" onclick="exitMaster()" data-i18n="btn_exit_master">Salir</button>
 </div>
 
-<!-- ② COSTES UNITARIOS -->
-<div class="section-mb">
-  <div class="sec-title"><span class="icon">💰</span><span data-i18n="sec_costes">Costes unitarios</span></div>
-  <div class="card">
-    <div class="g4">
-      <div class="fld"><label data-i18n="lbl_agua">Agua (€/l)</label><input type="number" id="c_agua" value="0.002" step="0.0001" min="0" oninput="calc()"></div>
-      <div class="fld"><label data-i18n="lbl_elec">Electricidad (€/kWh)</label><input type="number" id="c_elec" value="0.11" step="0.01" min="0" oninput="calc()"></div>
-      <div class="fld"><label data-i18n="lbl_deter">Detergente (€/kg)</label><input type="number" id="c_deter" value="5.75" step="0.1" min="0" oninput="calc()"></div>
-      <div class="fld"><label data-i18n="lbl_abrill">Abrillantador (€/kg)</label><input type="number" id="c_abrill" value="8.1" step="0.1" min="0" oninput="calc()"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ③ USO DEL EQUIPO -->
-<div class="section-mb">
-  <div class="sec-title"><span class="icon">🕐</span><span data-i18n="sec_uso">Uso del equipo</span></div>
-  <div class="card">
-    <div class="g4">
-      <div class="fld"><label data-i18n="lbl_dias">Días / año</label><input type="number" id="dias" value="300" min="1" max="365" oninput="calc()"></div>
-      <div class="fld"><label data-i18n="lbl_relevos">Relevos / día</label><input type="number" id="relevos" value="2" min="1" max="5" oninput="calc()"></div>
-      <div class="fld"><label data-i18n="lbl_horas">Horas / relevo</label><input type="number" id="horas" value="8" min="1" max="16" oninput="calc()"></div>
-      <div class="fld">
-        <label data-i18n="lbl_agua_feed">Alimentación de agua</label>
-        <div class="tog">
-          <button class="tb on" id="btn_hc" onclick="setWater('hot')" data-i18n="btn_hot">♨️ Caliente (55°)</button>
-          <button class="tb" id="btn_fc" onclick="setWater('cold')" data-i18n="btn_cold">❄️ Fría (25°)</button>
+<!-- MASTER PANEL -->
+<div id="master-panel" style="display:none">
+  <div class="wrap">
+    <div class="master-panel" style="margin-top:1rem">
+      <div class="master-panel-header">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="white" stroke-width="1.2"/><path d="M4 7h6M4 4.5h4M4 9.5h5" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span data-i18n="master_panel_title">Panel de administración</span>
+      </div>
+      <div class="master-panel-body">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('t-models')" data-i18n="tab_models">Modelos</button>
+          <button class="tab-btn" onclick="switchTab('t-tarifas')" data-i18n="tab_tarifas">Tarifas</button>
+          <button class="tab-btn" onclick="switchTab('t-paises')" data-i18n="tab_paises">Países</button>
+          <button class="tab-btn" onclick="switchTab('t-pass')" data-i18n="tab_pass">Contraseña</button>
+        </div>
+        <div id="t-models" class="tab-pane active"><div id="models-wrap"></div></div>
+        <div id="t-tarifas" class="tab-pane"><div id="tarifas-wrap"></div></div>
+        <div id="t-paises" class="tab-pane"><div id="paises-wrap"></div></div>
+        <div id="t-pass" class="tab-pane">
+          <div class="grid-3" style="max-width:480px">
+            <div class="field"><label data-i18n="lbl_pass_current">Contraseña actual</label><input type="password" id="pass-old"></div>
+            <div class="field"><label data-i18n="lbl_pass_new">Nueva contraseña</label><input type="password" id="pass-new1"></div>
+            <div class="field"><label data-i18n="lbl_pass_repeat">Repetir</label><input type="password" id="pass-new2"></div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:.75rem" onclick="changePass()" data-i18n="btn_change_pass">Cambiar contraseña</button>
+          <span id="pass-msg" style="font-size:12px;margin-left:10px"></span>
+          <hr class="divider" style="margin-top:1.25rem">
+          <div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:.5rem" data-i18n="lbl_reload_data">Recargar datos de GitHub</div>
+          <button class="btn btn-secondary btn-sm" onclick="reloadData()" data-i18n="btn_reload">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M11 6.5A4.5 4.5 0 112.5 4M2 1.5V4.5H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Recargar
+          </button>
+          <span id="reload-msg" style="font-size:12px;margin-left:8px"></span>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ④ PARÁMETROS MASTER -->
-<div class="section-mb">
-  <div class="sec-title"><span class="icon">⚙️</span><span data-i18n="sec_params">Parámetros técnicos</span></div>
+<div class="wrap">
+<div class="page-title">
+  <h1 data-i18n="page_title">Calculadora de Ahorro Operativo</h1>
+  <p data-i18n="page_sub">Comparativa de coste de propiedad y retorno de inversión</p>
+</div>
+
+<!-- ① DATOS INICIALES -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-title" data-i18n="sec_datos">Datos iniciales</div>
+  </div>
   <div class="card">
-    <div class="g4" style="margin-bottom:10px">
-      <div class="fld">
-        <label data-i18n="lbl_t_aclarado">Tª aclarado (°C)</label>
-        <input type="number" id="t_aclarado" value="85" min="60" max="100" disabled oninput="calc()">
-        <span class="locked-note" id="lock1"><span data-i18n="lbl_solo_master">Definido por el administrador</span></span>
+    <div class="grid-4" style="margin-bottom:1rem">
+      <div class="field">
+        <label><span data-i18n="lbl_pais">País del cliente</span><span class="req">*</span></label>
+        <select id="sel-pais" onchange="onPaisChange()"></select>
       </div>
-      <div class="fld">
-        <label data-i18n="lbl_t_cal">Tª agua caliente (°C)</label>
-        <input type="number" id="t_cal" value="55" min="40" max="75" disabled oninput="calc()">
-        <span class="locked-note" id="lock2"><span data-i18n="lbl_solo_master">Definido por el administrador</span></span>
+      <div class="field">
+        <label data-i18n="lbl_tarifa">Tarifa aplicada</label>
+        <input type="text" id="tarifa-display" readonly>
       </div>
-      <div class="fld">
-        <label data-i18n="lbl_t_fria">Tª agua fría (°C)</label>
-        <input type="number" id="t_fria" value="25" min="10" max="45" disabled oninput="calc()">
-        <span class="locked-note" id="lock3"><span data-i18n="lbl_solo_master">Definido por el administrador</span></span>
-      </div>
-      <div class="fld">
-        <label data-i18n="lbl_gr_deter">Detergente (gr/l)</label>
-        <input type="number" id="gr_deter" value="3" step="0.1" min="0.5" disabled oninput="calc()">
-        <span class="locked-note" id="lock4"><span data-i18n="lbl_solo_master">Definido por el administrador</span></span>
+      <div class="field">
+        <label><span data-i18n="lbl_dto">Descuento Fagor (%)</span><span class="req">*</span></label>
+        <input type="number" id="dto-fagor" value="50" step="0.1" min="0" max="100" oninput="calc()">
+        <span class="hint" data-i18n="hint_dto">Base 50%. Acepta decimales.</span>
       </div>
     </div>
-    <div class="g4">
-      <div class="fld">
-        <label data-i18n="lbl_gr_abrill">Abrillantador (gr/l)</label>
-        <input type="number" id="gr_abrill" value="0.2" step="0.05" min="0.05" disabled oninput="calc()">
-        <span class="locked-note" id="lock5"><span data-i18n="lbl_solo_master">Definido por el administrador</span></span>
-      </div>
+    <hr class="divider">
+    <div class="grid-3">
+      <div class="field"><label data-i18n="lbl_dist">Nombre distribuidor</label><input type="text" id="dist-nombre" oninput="updatePrint()"></div>
+      <div class="field"><label data-i18n="lbl_email">Email</label><input type="text" id="dist-email" oninput="updatePrint()"></div>
+      <div class="field"><label data-i18n="lbl_fecha">Fecha</label><input type="date" id="dist-fecha" oninput="updatePrint()"></div>
     </div>
   </div>
 </div>
 
-<!-- ⑤ TABLA COMPARATIVA COMPLETA -->
-<div class="section-mb">
-  <div class="sec-title"><span class="icon">🏆</span><span data-i18n="sec_tabla">TABLA COMPARATIVA COMPLETA</span></div>
-
-  <!-- MODELO DE REFERENCIA FAGOR -->
-  <div class="card" style="margin-bottom:10px">
-    <div class="row-hd"><span style="font-size:16px">⭐</span><h3 data-i18n="h3_ref_fagor">Modelo de referencia Fagor</h3></div>
-    <div class="g4">
-      <div class="fld">
-        <label data-i18n="lbl_modelo_fagor">Modelo Fagor</label>
-        <select id="sel_nuevo" onchange="calc()"></select>
+<!-- ② MODELO DE REFERENCIA -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-title" data-i18n="sec_ref">Modelo de referencia Fagor</div>
+  </div>
+  <div class="card model-card ref-card" id="ref-card">
+    <div class="model-card-header">
+      <span class="model-tag tag-ref" data-i18n="tag_ref">Referencia</span>
+    </div>
+    <div class="grid-4">
+      <div class="field">
+        <label data-i18n="lbl_modelo">Modelo</label>
+        <select id="sel-ref" onchange="onRefModelChange()"></select>
       </div>
-      <div class="fld"><label data-i18n="lbl_tarifa_aplicada">Tarifa aplicada</label><input type="text" id="ref_tarifa_label" readonly style="background:var(--gray-100);color:var(--gray-500)"></div>
-      <div class="fld"><label data-i18n="lbl_pvp_tarifa">PVP tarifa (€)</label><input type="number" id="pvp_nuevo" value="0" step="100" min="0" readonly style="background:var(--gray-100)"></div>
-      <div class="fld"><label data-i18n="lbl_pvp_neto">Precio neto con descuento (€)</label><input type="number" id="pvp_nuevo_neto" value="0" readonly style="background:var(--gray-100);color:var(--green-700);font-weight:700"></div>
+      <div class="field">
+        <label data-i18n="lbl_pvp_tarifa">PVP tarifa (€)</label>
+        <input type="number" id="pvp-ref" readonly>
+      </div>
+      <div class="field">
+        <label data-i18n="lbl_pvp_neto">Precio neto (€)</label>
+        <input type="number" id="pvp-ref-neto" readonly>
+      </div>
+      <div class="field">
+        <label data-i18n="lbl_velocidad">Velocidad de trabajo</label>
+        <select id="sel-vel-ref" onchange="calc()"></select>
+      </div>
     </div>
   </div>
 
-  <!-- MÁQUINAS FAGOR ADICIONALES -->
-  <div class="card" style="margin-bottom:10px">
-    <div class="row-hd"><span style="font-size:16px">🟦</span><h3 data-i18n="h3_fagor_extra">Añadir más modelos Fagor</h3></div>
-    <div id="fagor_extra_list"></div>
-    <button class="btn-add" onclick="addFagorExtra()" data-i18n="btn_add_fagor">+ Añadir modelo Fagor</button>
-  </div>
-
-  <!-- COMPETIDORES -->
-  <div class="card" style="margin-bottom:10px">
-    <div class="row-hd"><span style="font-size:16px">🏭</span><h3 data-i18n="h3_comp">Competidores</h3></div>
-    <div id="comp_list"></div>
-    <button class="btn-add" id="btn_add_comp" onclick="addComp()" data-i18n="btn_add_comp">+ Añadir competidor</button>
-  </div>
-
-  <!-- TABLA RESULTADOS -->
-  <div id="comp_results_section" style="display:none">
+  <!-- ICEBERG -->
+  <div id="iceberg-section" style="display:none;margin-top:1rem">
     <div class="card">
-      <div class="row-hd"><span style="font-size:18px">📋</span><h3 data-i18n="h3_resultados">Resultados comparativos</h3></div>
-      <div class="comp-results-wrap">
-        <table class="comp-table" id="comp_table"><thead></thead><tbody></tbody></table>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gray-500);margin-bottom:1rem" data-i18n="sec_iceberg">Coste de propiedad — 10 años</div>
+      <div class="iceberg-wrap">
+        <div class="iceberg-svg-wrap"><canvas id="iceberg-canvas" width="280" height="340"></canvas></div>
+        <div class="iceberg-legend" id="iceberg-legend"></div>
       </div>
-      <p class="note" id="comp_note" data-i18n="note_comp">(1) Indica cuánto más caro o barato es operar el equipo de Fagor nuevo vs competidor. Un valor positivo (verde) significa que el Fagor nuevo es más económico de operar.</p>
+      <hr class="divider">
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <span style="font-size:12px;color:var(--gray-500)" data-i18n="lbl_gasto_cesta">Coste operativo por cesta:</span>
+        <span style="font-size:18px;font-weight:700;color:var(--gray-900)" id="gasto-cesta-val">—</span>
+        <span style="font-size:12px;color:var(--gray-400)" data-i18n="lbl_eur_cesta">€/cesta</span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ⑥ ICEBERG -->
-<div class="section-mb" id="iceberg_section" style="display:none">
-  <div class="sec-title"><span class="icon">🧊</span><span data-i18n="sec_iceberg">ICEBERG MODELO DE REFERENCIA — 10 AÑOS</span></div>
+<!-- ③ MODELOS A COMPARAR -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-title" data-i18n="sec_comp">Modelos a comparar</div>
+  </div>
+  <div id="comp-cards"></div>
+  <div class="add-row">
+    <button class="btn-add" onclick="addFagor()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7 4.5v5M4.5 7h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span data-i18n="btn_add_fagor">Añadir modelo Fagor</span>
+    </button>
+    <button class="btn-add" onclick="addComp()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7 4.5v5M4.5 7h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span data-i18n="btn_add_comp">Añadir competidor</span>
+    </button>
+  </div>
+</div>
+
+<!-- ④ PARÁMETROS ADMIN -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div class="section-title" data-i18n="sec_params">Parámetros técnicos</div>
+  </div>
   <div class="card">
-    <p style="font-size:12px;color:var(--gray-500);margin-bottom:14px" data-i18n="iceberg_desc">Desglose del coste total de propiedad durante los primeros 10 años. La parte visible (inversión) y lo que queda bajo el agua (operación).</p>
-    <div class="iceberg-wrap">
-      <div class="iceberg-canvas-wrap">
-        <canvas id="iceberg_canvas" width="340" height="320"></canvas>
+    <div class="grid-4" style="margin-bottom:.75rem">
+      <div class="field">
+        <label data-i18n="lbl_t_aclarado">Tª aclarado (°C)</label>
+        <input type="number" id="t-aclarado" value="85" disabled oninput="calc()">
+        <span class="field-note-admin" data-i18n="lbl_admin_param">Definido por el administrador</span>
       </div>
-      <div class="iceberg-legend" id="iceberg_legend"></div>
+      <div class="field">
+        <label data-i18n="lbl_t_cal">Tª agua caliente (°C)</label>
+        <input type="number" id="t-cal" value="55" disabled oninput="calc()">
+        <span class="field-note-admin" data-i18n="lbl_admin_param">Definido por el administrador</span>
+      </div>
+      <div class="field">
+        <label data-i18n="lbl_t_fria">Tª agua fría (°C)</label>
+        <input type="number" id="t-fria" value="25" disabled oninput="calc()">
+        <span class="field-note-admin" data-i18n="lbl_admin_param">Definido por el administrador</span>
+      </div>
     </div>
-    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--gray-100)">
-      <span style="font-size:13px;color:var(--gray-500)" data-i18n="lbl_gasto_cesta">Gasto operativo por cesta (energía + agua + químico):</span>
-      <span style="font-size:17px;font-weight:700;color:var(--blue-600);margin-left:8px" id="gasto_cesta_val">—</span>
-      <span style="font-size:12px;color:var(--gray-400);margin-left:4px" data-i18n="lbl_eur_cesta">€/cesta</span>
+    <div class="grid-4">
+      <div class="field">
+        <label data-i18n="lbl_gr_deter">Detergente (gr/l)</label>
+        <input type="number" id="gr-deter" value="3" step="0.1" disabled oninput="calc()">
+        <span class="field-note-admin" data-i18n="lbl_admin_param">Definido por el administrador</span>
+      </div>
+      <div class="field">
+        <label data-i18n="lbl_gr_abrill">Abrillantador (gr/l)</label>
+        <input type="number" id="gr-abrill" value="0.2" step="0.05" disabled oninput="calc()">
+        <span class="field-note-admin" data-i18n="lbl_admin_param">Definido por el administrador</span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ⑧ COMPARATIVA MODELO REFERENCIA VS SELECCIONADO -->
-<div class="section-mb">
-  <div class="sec-title"><span class="icon">📊</span><span data-i18n="sec_comparativa">COMPARATIVA: MODELO REFERENCIA FAGOR VS SELECCIONADO</span></div>
+<!-- ⑤ COSTES UNITARIOS -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div class="section-title" data-i18n="sec_costes">Costes unitarios</div>
+  </div>
   <div class="card">
-    <div class="g2" style="margin-bottom:12px">
-      <div class="fld">
-        <label data-i18n="lbl_modelo_ref">Modelo de referencia</label>
-        <input type="text" id="comp_ref_label" readonly style="background:var(--gray-100);color:var(--gray-500)">
-      </div>
-      <div class="fld">
-        <label data-i18n="lbl_modelo_sel">Modelo seleccionado para comparar</label>
-        <select id="sel_comparado" onchange="calcComparativa()"></select>
-      </div>
-    </div>
-
-    <div class="metrics">
-      <div class="mcard"><div class="mlbl" data-i18n="mlbl_ahorro_total">Ahorro anual total</div><div class="mval pos" id="r_ahorro_total">—</div><div class="msub" data-i18n="msub_eur_year">€/año</div></div>
-      <div class="mcard"><div class="mlbl" data-i18n="mlbl_ahorro_cesta">Ahorro por cesta</div><div class="mval pos" id="r_ahorro_cesta">—</div><div class="msub" data-i18n="lbl_eur_cesta">€/cesta</div></div>
-      <div class="mcard"><div class="mlbl" data-i18n="mlbl_dif_precio">Diferencia precio neto</div><div class="mval" id="r_sobrecoste">—</div><div class="msub">€</div></div>
-      <div class="mcard"><div class="mlbl" data-i18n="mlbl_roi">Payback (ROI)</div><div class="mval" id="r_roi">—</div><div class="msub" data-i18n="msub_years">años</div></div>
-    </div>
-
-    <div class="card" style="box-shadow:none;border-color:var(--gray-100)">
-      <div class="row-hd"><span style="font-size:16px">🌿</span><h3 data-i18n="h3_desglose">Desglose del ahorro anual</h3></div>
-      <div class="sr"><span class="lbl">💧 <span data-i18n="lbl_agua_lbl">Agua</span></span><span class="val" id="d_agua">—</span></div>
-      <div class="sr"><span class="lbl">🧴 <span data-i18n="lbl_deter_lbl">Detergente</span></span><span class="val" id="d_deter">—</span></div>
-      <div class="sr"><span class="lbl">✨ <span data-i18n="lbl_abrill_lbl">Abrillantador</span></span><span class="val" id="d_abrill">—</span></div>
-      <div class="sr"><span class="lbl">⚡ <span data-i18n="lbl_elec_lbl">Electricidad</span></span><span class="val" id="d_elec">—</span></div>
-      <div class="divider"></div>
-      <div class="sr" style="font-weight:700"><span class="lbl" data-i18n="lbl_total">Total</span><span class="val" id="d_total">—</span></div>
+    <div class="grid-4">
+      <div class="field"><label data-i18n="lbl_c_agua">Agua (€/l)</label><input type="number" id="c-agua" value="0.002" step="0.0001" min="0" oninput="calc()"></div>
+      <div class="field"><label data-i18n="lbl_c_elec">Electricidad (€/kWh)</label><input type="number" id="c-elec" value="0.15" step="0.01" min="0" oninput="calc()"></div>
+      <div class="field"><label data-i18n="lbl_c_deter">Detergente (€/kg)</label><input type="number" id="c-deter" value="5.75" step="0.1" min="0" oninput="calc()"></div>
+      <div class="field"><label data-i18n="lbl_c_abrill">Abrillantador (€/kg)</label><input type="number" id="c-abrill" value="8.1" step="0.1" min="0" oninput="calc()"></div>
     </div>
   </div>
 </div>
-<!-- PRINT BUTTON -->
-<div style="display:flex;justify-content:flex-end;margin-top:1.5rem;padding-bottom:2rem">
-  <button class="btn-sm btn-primary" onclick="printReport()" style="gap:8px;display:flex;align-items:center;height:40px;padding:0 20px;font-size:14px" data-i18n="btn_print">🖨️ Imprimir informe</button>
+
+<!-- ⑥ UTILIZACIÓN -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div class="section-title" data-i18n="sec_uso">Utilización del equipo</div>
+  </div>
+  <div class="card">
+    <div class="grid-4">
+      <div class="field"><label data-i18n="lbl_dias">Días / año</label><input type="number" id="dias" value="300" min="1" max="365" oninput="calc()"></div>
+      <div class="field"><label data-i18n="lbl_relevos">Relevos / día</label><input type="number" id="relevos" value="2" min="1" max="5" oninput="calc()"></div>
+      <div class="field"><label data-i18n="lbl_horas">Horas / relevo</label><input type="number" id="horas" value="8" min="1" max="16" oninput="calc()"></div>
+      <div class="field">
+        <label data-i18n="lbl_agua_feed">Alimentación de agua</label>
+        <div class="toggle-group">
+          <button class="tg-btn on" id="btn-hot" onclick="setWater('hot')" data-i18n="btn_hot">Caliente</button>
+          <button class="tg-btn" id="btn-cold" onclick="setWater('cold')" data-i18n="btn_cold">Fría</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-</div><!-- .page -->
+<!-- ⑦ TABLA COMPARATIVA -->
+<div class="section" id="table-section" style="display:none">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div class="section-title" data-i18n="sec_tabla">Tabla comparativa</div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table class="comp-table" id="comp-table"><thead></thead><tbody></tbody></table>
+    </div>
+    <p class="note" id="table-note" data-i18n="note_tabla"></p>
+  </div>
+</div>
+
+<!-- ⑧ COMPARATIVA EN DETALLE -->
+<div class="section" id="detail-section" style="display:none">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div class="section-title" data-i18n="sec_detalle">Comparativa en detalle</div>
+  </div>
+  <div class="card">
+    <div class="grid-2" style="margin-bottom:1rem">
+      <div class="field">
+        <label data-i18n="lbl_ref_detalle">Modelo de referencia</label>
+        <input type="text" id="detail-ref-label" readonly>
+      </div>
+      <div class="field">
+        <label data-i18n="lbl_sel_detalle">Modelo a comparar</label>
+        <select id="sel-detail" onchange="calcDetail()"></select>
+      </div>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-label" data-i18n="mlbl_ahorro">Ahorro anual</div><div class="metric-val" id="d-ahorro-total">—</div><div class="metric-sub">€/año</div></div>
+      <div class="metric-card"><div class="metric-label" data-i18n="mlbl_cesta">Por cesta</div><div class="metric-val" id="d-ahorro-cesta">—</div><div class="metric-sub" data-i18n="lbl_eur_cesta">€/cesta</div></div>
+      <div class="metric-card"><div class="metric-label" data-i18n="mlbl_dif_precio">Dif. precio neto</div><div class="metric-val" id="d-sobrecoste">—</div><div class="metric-sub">€</div></div>
+      <div class="metric-card"><div class="metric-label">Payback (ROI)</div><div class="metric-val" id="d-roi">—</div><div class="metric-sub" data-i18n="msub_years">años</div></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-500);margin-bottom:.5rem" data-i18n="lbl_desglose">Desglose del ahorro</div>
+    <div class="detail-row"><span class="detail-lbl" data-i18n="lbl_agua_lbl">Agua</span><span class="detail-val" id="dd-agua">—</span></div>
+    <div class="detail-row"><span class="detail-lbl" data-i18n="lbl_deter_lbl">Detergente</span><span class="detail-val" id="dd-deter">—</span></div>
+    <div class="detail-row"><span class="detail-lbl" data-i18n="lbl_abrill_lbl">Abrillantador</span><span class="detail-val" id="dd-abrill">—</span></div>
+    <div class="detail-row"><span class="detail-lbl" data-i18n="lbl_elec_lbl">Electricidad</span><span class="detail-val" id="dd-elec">—</span></div>
+    <div class="detail-row" style="font-weight:700"><span class="detail-lbl" data-i18n="lbl_total">Total</span><span class="detail-val" id="dd-total">—</span></div>
+  </div>
+</div>
+
+<!-- ⑨ DESCARGAR -->
+<div class="section" id="download-section" style="display:none">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <div class="section-title" data-i18n="sec_informe">Informe</div>
+  </div>
+  <div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:13px;font-weight:600;color:var(--gray-900)" data-i18n="informe_title">Descargar informe</div>
+      <div style="font-size:12px;color:var(--gray-400);margin-top:2px" data-i18n="informe_sub">PDF con todos los datos introducidos y comparativas generadas</div>
+    </div>
+    <button class="btn btn-primary" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5V2h8v3M3 10H2a1 1 0 01-1-1V6a1 1 0 011-1h10a1 1 0 011 1v3a1 1 0 01-1 1h-1M3 8h8v5H3z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-i18n="btn_print">Imprimir / Descargar PDF</span>
+    </button>
+  </div>
+</div>
+
+</div><!-- .wrap -->
 
 <script>
 /* ═══════════════════════════════════════════════
-   STATE
+   CONFIG
 ═══════════════════════════════════════════════ */
-let masterMode = false;
-let waterMode = 'hot';
-let chartInst = null;
-let compList = [];
-let compId = 0;
-let fagorExtraList = [];
-let fagorExtraId = 0;
-let _calculating = false; // recursion guard
-
-// ── Default master password (stored obfuscated in runtime, not source)
-let MASTER_PASS = atob('ZmFnb3IyMDI0');
-
-// ── GITHUB RAW BASE URL (update if repo changes)
 const GITHUB_BASE = 'https://raw.githubusercontent.com/inakigoikoFAGOR/fagor-calculadora/refs/heads/main';
-const csvURL = name => `${GITHUB_BASE}/${name}.csv`;
+const csvURL = n => `${GITHUB_BASE}/${n}.csv`;
 
-// ── DATA (populated from GitHub CSVs on load)
-let MODELS  = { nuevo: [], viejo: [] };
+let MASTER_PASS = atob('ZmFnb3IyMDI0');
+let masterMode  = false;
+let waterMode   = 'hot';
+let currentLang = 'es';
+let _calc_lock  = false;
+
+let MODELS  = { nuevo:[], viejo:[] };
 let TARIFAS = [];
 let PAISES  = [];
 
-/* ── CSV PARSER ─────────────────────────────────────────── */
-function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  return lines.map(line => {
-    const cols = []; let cur = '', inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-      else { cur += ch; }
-    }
-    cols.push(cur.trim());
-    return cols;
+let compList = [];   // {id, type:'fagor'|'comp', ...data, editing}
+let compId   = 0;
+let editingCompId = null; // for edit-in-place from table
+
+/* ═══════════════════════════════════════════════
+   I18N
+═══════════════════════════════════════════════ */
+const T = {
+  es:{
+    loading:'Cargando datos...', header_sub:'Calculadora ROI',
+    page_title:'Calculadora de Ahorro Operativo',
+    page_sub:'Comparativa de coste de propiedad y retorno de inversión',
+    sec_datos:'Datos iniciales', sec_ref:'Modelo de referencia Fagor',
+    sec_comp:'Modelos a comparar', sec_params:'Parámetros técnicos',
+    sec_costes:'Costes unitarios', sec_uso:'Utilización del equipo',
+    sec_tabla:'Tabla comparativa', sec_detalle:'Comparativa en detalle',
+    sec_informe:'Informe', sec_iceberg:'Coste de propiedad — 10 años',
+    lbl_pais:'País del cliente', lbl_tarifa:'Tarifa aplicada',
+    lbl_dto:'Descuento Fagor (%)', hint_dto:'Base 50%. Acepta decimales.',
+    lbl_dist:'Nombre distribuidor', lbl_email:'Email', lbl_fecha:'Fecha',
+    lbl_modelo:'Modelo', lbl_pvp_tarifa:'PVP tarifa (€)',
+    lbl_pvp_neto:'Precio neto (€)', lbl_velocidad:'Velocidad de trabajo',
+    lbl_gasto_cesta:'Coste operativo por cesta:', lbl_eur_cesta:'€/cesta',
+    btn_add_fagor:'Añadir modelo Fagor', btn_add_comp:'Añadir competidor',
+    lbl_admin_param:'Definido por el administrador',
+    lbl_t_aclarado:'Tª aclarado (°C)', lbl_t_cal:'Tª agua caliente (°C)',
+    lbl_t_fria:'Tª agua fría (°C)', lbl_gr_deter:'Detergente (gr/l)',
+    lbl_gr_abrill:'Abrillantador (gr/l)',
+    lbl_c_agua:'Agua (€/l)', lbl_c_elec:'Electricidad (€/kWh)',
+    lbl_c_deter:'Detergente (€/kg)', lbl_c_abrill:'Abrillantador (€/kg)',
+    lbl_dias:'Días / año', lbl_relevos:'Relevos / día', lbl_horas:'Horas / relevo',
+    lbl_agua_feed:'Alimentación de agua', btn_hot:'Caliente', btn_cold:'Fría',
+    tag_ref:'Referencia', tag_fagor:'Fagor', tag_comp:'Competidor',
+    lbl_marca:'Marca', lbl_modelo_comp:'Modelo', lbl_pvp_comp:'PVP (€)',
+    lbl_dto_comp:'Descuento (%)', lbl_tanq:'Capacidad tanque (l)',
+    lbl_tanq_note:'Suma tanques prelavado + lavado', lbl_prod:'Producción máx (cestas/h)',
+    lbl_lh:'Consumo agua (l/h)', btn_add:'Añadir', btn_save:'Guardar cambios', btn_cancel:'Cancelar',
+    col_equipo:'Equipo', col_tanque:'Tanque (l)', col_prod:'Cestas/h',
+    col_agua_lh:'Agua (l/h)', col_pvp_neto:'PVP neto (€)',
+    col_coste:'Coste/cesta (€)', col_ahorro:'Ahorro vs ref (€/año)',
+    col_sobrecoste:'Dif. precio (€)', col_roi:'ROI',
+    note_tabla:'(1) Ahorro anual operativo frente al modelo de referencia. Positivo = Fagor más económico de operar.',
+    lbl_ref_detalle:'Modelo de referencia', lbl_sel_detalle:'Modelo a comparar',
+    mlbl_ahorro:'Ahorro anual', mlbl_cesta:'Por cesta',
+    mlbl_dif_precio:'Dif. precio neto', msub_years:'años',
+    lbl_desglose:'Desglose del ahorro',
+    lbl_agua_lbl:'Agua', lbl_deter_lbl:'Detergente',
+    lbl_abrill_lbl:'Abrillantador', lbl_elec_lbl:'Electricidad', lbl_total:'Total',
+    informe_title:'Descargar informe',
+    informe_sub:'PDF con todos los datos introducidos y comparativas generadas',
+    btn_print:'Imprimir / Descargar PDF',
+    ice_inv:'Inversión', ice_elec:'Energía', ice_agua:'Agua', ice_quim:'Químicos',
+    ice_visible:'Visible', ice_hidden:'Oculto',
+    ice_total:'Coste total 10 años',
+    ice_insight:'del coste total está oculto en la operación',
+    tab_models:'Modelos', tab_tarifas:'Tarifas', tab_paises:'Países', tab_pass:'Contraseña',
+    master_panel_title:'Panel de administración',
+    lbl_pass_current:'Contraseña actual', lbl_pass_new:'Nueva', lbl_pass_repeat:'Repetir',
+    btn_change_pass:'Cambiar contraseña', lbl_reload_data:'Recargar datos de GitHub',
+    btn_reload:'Recargar', btn_enter:'Entrar', btn_exit_master:'Salir',
+    roi_y:'año', roi_ys:'años', roi_m:'mes', roi_ms:'meses', roi_and:'y',
+  },
+  en:{
+    loading:'Loading data...', header_sub:'ROI Calculator',
+    page_title:'Operational Savings Calculator',
+    page_sub:'Total cost of ownership comparison and return on investment analysis',
+    sec_datos:'Initial data', sec_ref:'Fagor reference model',
+    sec_comp:'Models to compare', sec_params:'Technical parameters',
+    sec_costes:'Unit costs', sec_uso:'Equipment usage',
+    sec_tabla:'Comparison table', sec_detalle:'Detailed comparison',
+    sec_informe:'Report', sec_iceberg:'Cost of ownership — 10 years',
+    lbl_pais:'Customer country', lbl_tarifa:'Applied rate',
+    lbl_dto:'Fagor discount (%)', hint_dto:'Base 50%. Decimals accepted.',
+    lbl_dist:'Distributor name', lbl_email:'Email', lbl_fecha:'Date',
+    lbl_modelo:'Model', lbl_pvp_tarifa:'List price (€)',
+    lbl_pvp_neto:'Net price (€)', lbl_velocidad:'Working speed',
+    lbl_gasto_cesta:'Operational cost per rack:', lbl_eur_cesta:'€/rack',
+    btn_add_fagor:'Add Fagor model', btn_add_comp:'Add competitor',
+    lbl_admin_param:'Set by administrator',
+    lbl_t_aclarado:'Rinse temp (°C)', lbl_t_cal:'Hot water temp (°C)',
+    lbl_t_fria:'Cold water temp (°C)', lbl_gr_deter:'Detergent (g/l)',
+    lbl_gr_abrill:'Rinse aid (g/l)',
+    lbl_c_agua:'Water (€/l)', lbl_c_elec:'Electricity (€/kWh)',
+    lbl_c_deter:'Detergent (€/kg)', lbl_c_abrill:'Rinse aid (€/kg)',
+    lbl_dias:'Days / year', lbl_relevos:'Shifts / day', lbl_horas:'Hours / shift',
+    lbl_agua_feed:'Water supply', btn_hot:'Hot', btn_cold:'Cold',
+    tag_ref:'Reference', tag_fagor:'Fagor', tag_comp:'Competitor',
+    lbl_marca:'Brand', lbl_modelo_comp:'Model', lbl_pvp_comp:'List price (€)',
+    lbl_dto_comp:'Discount (%)', lbl_tanq:'Tank capacity (l)',
+    lbl_tanq_note:'Sum of pre-wash + wash tanks', lbl_prod:'Max output (racks/h)',
+    lbl_lh:'Water consumption (l/h)', btn_add:'Add', btn_save:'Save changes', btn_cancel:'Cancel',
+    col_equipo:'Equipment', col_tanque:'Tank (l)', col_prod:'Racks/h',
+    col_agua_lh:'Water (l/h)', col_pvp_neto:'Net price (€)',
+    col_coste:'Cost/rack (€)', col_ahorro:'Savings vs ref (€/yr)',
+    col_sobrecoste:'Price diff (€)', col_roi:'ROI',
+    note_tabla:'(1) Annual operational savings vs reference model. Positive = Fagor cheaper to operate.',
+    lbl_ref_detalle:'Reference model', lbl_sel_detalle:'Model to compare',
+    mlbl_ahorro:'Annual savings', mlbl_cesta:'Per rack',
+    mlbl_dif_precio:'Net price diff', msub_years:'years',
+    lbl_desglose:'Savings breakdown',
+    lbl_agua_lbl:'Water', lbl_deter_lbl:'Detergent',
+    lbl_abrill_lbl:'Rinse aid', lbl_elec_lbl:'Electricity', lbl_total:'Total',
+    informe_title:'Download report',
+    informe_sub:'PDF with all entered data and generated comparisons',
+    btn_print:'Print / Download PDF',
+    ice_inv:'Investment', ice_elec:'Energy', ice_agua:'Water', ice_quim:'Chemicals',
+    ice_visible:'Visible', ice_hidden:'Hidden',
+    ice_total:'Total cost 10 years',
+    ice_insight:'of total cost is hidden in operations',
+    tab_models:'Models', tab_tarifas:'Rates', tab_paises:'Countries', tab_pass:'Password',
+    master_panel_title:'Administration panel',
+    lbl_pass_current:'Current password', lbl_pass_new:'New', lbl_pass_repeat:'Repeat',
+    btn_change_pass:'Change password', lbl_reload_data:'Reload data from GitHub',
+    btn_reload:'Reload', btn_enter:'Enter', btn_exit_master:'Exit',
+    roi_y:'year', roi_ys:'years', roi_m:'month', roi_ms:'months', roi_and:'and',
+  },
+  fr:{
+    loading:'Chargement...', header_sub:'Calculateur ROI',
+    page_title:'Calculateur d\'économies opérationnelles',
+    page_sub:'Comparaison du coût total de possession et analyse du retour sur investissement',
+    sec_datos:'Données initiales', sec_ref:'Modèle de référence Fagor',
+    sec_comp:'Modèles à comparer', sec_params:'Paramètres techniques',
+    sec_costes:'Coûts unitaires', sec_uso:'Utilisation de l\'équipement',
+    sec_tabla:'Tableau comparatif', sec_detalle:'Comparaison détaillée',
+    sec_informe:'Rapport', sec_iceberg:'Coût de possession — 10 ans',
+    lbl_pais:'Pays du client', lbl_tarifa:'Tarif appliqué',
+    lbl_dto:'Remise Fagor (%)', hint_dto:'Base 50 %. Décimales acceptées.',
+    lbl_dist:'Nom du distributeur', lbl_email:'Email', lbl_fecha:'Date',
+    lbl_modelo:'Modèle', lbl_pvp_tarifa:'Prix catalogue (€)',
+    lbl_pvp_neto:'Prix net (€)', lbl_velocidad:'Vitesse de travail',
+    lbl_gasto_cesta:'Coût opérationnel par panier :', lbl_eur_cesta:'€/panier',
+    btn_add_fagor:'Ajouter modèle Fagor', btn_add_comp:'Ajouter concurrent',
+    lbl_admin_param:"Défini par l'administrateur",
+    lbl_t_aclarado:'T° rinçage (°C)', lbl_t_cal:'T° eau chaude (°C)',
+    lbl_t_fria:'T° eau froide (°C)', lbl_gr_deter:'Détergent (g/l)',
+    lbl_gr_abrill:'Produit de rinçage (g/l)',
+    lbl_c_agua:'Eau (€/l)', lbl_c_elec:'Électricité (€/kWh)',
+    lbl_c_deter:'Détergent (€/kg)', lbl_c_abrill:'Produit de rinçage (€/kg)',
+    lbl_dias:'Jours / an', lbl_relevos:'Équipes / jour', lbl_horas:'Heures / équipe',
+    lbl_agua_feed:'Alimentation en eau', btn_hot:'Chaude', btn_cold:'Froide',
+    tag_ref:'Référence', tag_fagor:'Fagor', tag_comp:'Concurrent',
+    lbl_marca:'Marque', lbl_modelo_comp:'Modèle', lbl_pvp_comp:'Prix catalogue (€)',
+    lbl_dto_comp:'Remise (%)', lbl_tanq:'Capacité réservoir (l)',
+    lbl_tanq_note:'Somme réservoirs prélavage + lavage', lbl_prod:'Production max (paniers/h)',
+    lbl_lh:'Consommation eau (l/h)', btn_add:'Ajouter', btn_save:'Enregistrer', btn_cancel:'Annuler',
+    col_equipo:'Équipement', col_tanque:'Réservoir (l)', col_prod:'Paniers/h',
+    col_agua_lh:'Eau (l/h)', col_pvp_neto:'Prix net (€)',
+    col_coste:'Coût/panier (€)', col_ahorro:'Économies vs réf (€/an)',
+    col_sobrecoste:'Diff. prix (€)', col_roi:'ROI',
+    note_tabla:'(1) Économies opérationnelles annuelles vs modèle de référence. Positif = Fagor moins cher à exploiter.',
+    lbl_ref_detalle:'Modèle de référence', lbl_sel_detalle:'Modèle à comparer',
+    mlbl_ahorro:'Économies annuelles', mlbl_cesta:'Par panier',
+    mlbl_dif_precio:'Diff. prix net', msub_years:'ans',
+    lbl_desglose:'Détail des économies',
+    lbl_agua_lbl:'Eau', lbl_deter_lbl:'Détergent',
+    lbl_abrill_lbl:'Produit de rinçage', lbl_elec_lbl:'Électricité', lbl_total:'Total',
+    informe_title:'Télécharger le rapport',
+    informe_sub:'PDF avec toutes les données saisies et comparaisons générées',
+    btn_print:'Imprimer / Télécharger PDF',
+    ice_inv:'Investissement', ice_elec:'Énergie', ice_agua:'Eau', ice_quim:'Produits',
+    ice_visible:'Visible', ice_hidden:'Caché',
+    ice_total:'Coût total 10 ans',
+    ice_insight:'du coût total est caché dans l\'exploitation',
+    tab_models:'Modèles', tab_tarifas:'Tarifs', tab_paises:'Pays', tab_pass:'Mot de passe',
+    master_panel_title:"Panneau d'administration",
+    lbl_pass_current:'Mot de passe actuel', lbl_pass_new:'Nouveau', lbl_pass_repeat:'Répéter',
+    btn_change_pass:'Changer le mot de passe', lbl_reload_data:'Recharger les données GitHub',
+    btn_reload:'Recharger', btn_enter:'Entrer', btn_exit_master:'Quitter',
+    roi_y:'an', roi_ys:'ans', roi_m:'mois', roi_ms:'mois', roi_and:'et',
+  }
+};
+
+function t(k){ return T[currentLang]?.[k] || T.es[k] || k; }
+
+function setLang(l){
+  currentLang = l;
+  ['es','en','fr'].forEach(x => {
+    const b = document.getElementById('lang_'+x);
+    if(b) b.className = 'lang-btn'+(x===l?' active':'');
   });
-}
-
-function csvVal(v) {
-  if (v === undefined || v === null) return '';
-  return String(v).replace(/^"|"$/g, '').trim();
-}
-
-function num(v) {
-  if (v === undefined || v === null) return 0;
-  const s = String(v).replace(/^"|"$/g,'').trim().replace(/\./g,'').replace(',','.');
-  const n = parseFloat(s);
-  return isNaN(n) ? 0 : n;
-}
-
-
-
-/* ── LOAD FROM GITHUB ───────────────────────────────────── */
-async function loadSheetData() {
-  showLoadingOverlay(true);
-  try {
-    const [csvModels, csvTarifas, csvPaises, csvParams] = await Promise.all([
-      fetch(csvURL('1_Modelos_Fagor')).then(r => r.text()),
-      fetch(csvURL('2_Tarifas_y_Precios')).then(r => r.text()),
-      fetch(csvURL('3_Paises_Tarifa')).then(r => r.text()),
-      fetch(csvURL('4_Parametros_Calculo')).then(r => r.text()),
-    ]);
-    parseModels(csvModels);
-    parseTarifas(csvTarifas);
-    parsePaises(csvPaises);
-    parseParams(csvParams);
-    showLoadingOverlay(false);
-    return true;
-  } catch(e) {
-    console.error('Error loading data:', e);
-    showLoadingOverlay(false, true);
-    return false;
-  }
-}
-
-function parseModels(csv) {
-  const rows = parseCSV(csv);
-  if (rows.length < 2) return;
-  // Row 0 = headers, rows 1+ = data
-  // Cols: Referencia, Modelo, Tanque prelavado, Tanque primer lavado, Tanque lavado principal, Produccion, Consumo, Gama
-  MODELS.nuevo = []; MODELS.viejo = [];
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    if (!r || r.length < 8) continue;
-    const ref   = csvVal(r[0]);
-    const model = csvVal(r[1]);
-    const pre   = num(r[2]);
-    const er1   = num(r[3]);
-    const lav   = num(r[4]);
-    const prod  = num(r[5]);
-    const lh    = num(r[6]);
-    const gama  = csvVal(r[7]).toUpperCase();
-    if (!model || !prod) continue;
-    const tanq = pre + er1 + lav;
-    const obj = { id: model, ref, tanq, prod, lh };
-    if (gama === 'CCO') MODELS.viejo.push(obj);
-    else MODELS.nuevo.push(obj);
-  }
-}
-
-function parseTarifas(csv) {
-  const rows = parseCSV(csv);
-  if (rows.length < 2) return;
-  // Row 0 = headers: Referencia, Modelo, PVP 00, PVP E0, PVP K0, PVP P1, PVP 30, PVP 72
-  const headers = rows[0].map(h => csvVal(h));
-  // Build tarifa list from columns 2+
-  const tarifaCols = [];
-  for (let ci = 2; ci < headers.length; ci++) {
-    const h = headers[ci];
-    if (!h) continue;
-    // Extract ID: "PVP 00" → "00", "PVP E0" → "E0"
-    const m = h.match(/PVP\s+(\w+)/i);
-    const id = m ? m[1] : h;
-    tarifaCols.push({ ci, id, nombre: h });
-  }
-  TARIFAS = tarifaCols.map(t => ({ id: t.id, nombre: t.nombre, precios: {} }));
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    const modelo = csvVal(r[1]);
-    if (!modelo) continue;
-    tarifaCols.forEach((t, ti) => {
-      const v = num(r[t.ci]);
-      if (v > 0) TARIFAS[ti].precios[modelo] = v;
-    });
-  }
-  TARIFAS = TARIFAS.filter(t => Object.keys(t.precios).length > 0);
-}
-
-function parsePaises(csv) {
-  const rows = parseCSV(csv);
-  if (rows.length < 2) return;
-  // Row 0 = headers: ID Tarifa, Continente, Pais
-  // Rows 1+ = data
-  PAISES = [];
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    const tarifa = csvVal(r[0]);
-    const pais   = csvVal(r[2]);
-    if (!tarifa || !pais) continue;
-    PAISES.push({ nombre: pais, tarifa, c_agua: 0.002, c_elec: 0.15 });
-  }
-  PAISES.sort((a,b) => a.nombre.localeCompare(b.nombre));
-}
-
-function parseParams(csv) {
-  const rows = parseCSV(csv);
-  rows.forEach(r => {
-    const label = csvVal(r[0]).toLowerCase();
-    const v     = parseFloat(csvVal(r[1]));
-    if (!v) return;
-    if (label.includes('aclarado'))                              { const e=$('t_aclarado'); if(e) e.value=v; }
-    else if (label.includes('caliente'))                         { const e=$('t_cal');      if(e) e.value=v; }
-    else if (label.includes('fria') || label.includes('fría'))   { const e=$('t_fria');     if(e) e.value=v; }
-    else if (label.includes('detergente'))                       { const e=$('gr_deter');   if(e) e.value=v; }
-    else if (label.includes('abrill'))                           { const e=$('gr_abrill');  if(e) e.value=v; }
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
   });
-}
-
-/* ── CSV PARSER ─────────────────────────────────────────── */
-function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  return lines.map(line => {
-    const cols = []; let cur = '', inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-      else { cur += ch; }
-    }
-    cols.push(cur.trim());
-    return cols;
-  });
-}
-
-function csvVal(v) {
-  if (v === undefined || v === null) return '';
-  return String(v).replace(/^"|"$/g, '').trim();
-}
-
-function num(v) {
-  if (v === undefined || v === null) return 0;
-  const s = String(v).replace(/^"|"$/g,'').trim().replace(/\./g,'').replace(',','.');
-  const n = parseFloat(s);
-  return isNaN(n) ? 0 : n;
-}
-
-/* ── LOAD FROM GITHUB ───────────────────────────────────── */
-async function loadSheetData() {
-  showLoadingOverlay(true);
-  try {
-    const [csvModels, csvTarifas, csvPaises, csvParams] = await Promise.all([
-      fetch(csvURL('1_Modelos_Fagor')).then(r => r.text()),
-      fetch(csvURL('2_Tarifas_y_Precios')).then(r => r.text()),
-      fetch(csvURL('3_Paises_Tarifa')).then(r => r.text()),
-      fetch(csvURL('4_Parametros_Calculo')).then(r => r.text()),
-    ]);
-    parseModels(csvModels);
-    parseTarifas(csvTarifas);
-    parsePaises(csvPaises);
-    parseParams(csvParams);
-    showLoadingOverlay(false);
-    return true;
-  } catch(e) {
-    console.error('Error loading sheet data:', e);
-    showLoadingOverlay(false, true);
-    return false;
-  }
-}
-
-function parseModels(csv) {
-  const rows = parseCSV(csv);
-  if (rows.length < 2) return;
-  // Row 0 = headers, rows 1+ = data
-  // Cols: 0=Referencia, 1=Modelo, 2=Tanque prelavado, 3=Tanque primer lavado,
-  //       4=Tanque lavado principal, 5=Produccion, 6=Consumo, 7=Gama
-  MODELS.nuevo = []; MODELS.viejo = [];
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    if (!r || r.length < 6) continue;
-    const model = csvVal(r[1]);
-    const prod  = num(r[5]);
-    const lh    = num(r[6]);
-    const gama  = csvVal(r[7]).toUpperCase();
-    if (!model || !prod) continue;
-    const tanq = num(r[2]) + num(r[3]) + num(r[4]);
-    const obj  = { id: model, ref: csvVal(r[0]), tanq: tanq || num(r[4]), prod, lh };
-    if (gama === 'CCO') MODELS.viejo.push(obj);
-    else MODELS.nuevo.push(obj);
-  }
-}
-
-function parseTarifas(csv) {
-  const rows = parseCSV(csv);
-  // Structure: row 0=title+note merged, row 1=blank or section, row 2=headers
-  // Headers row contains "Referencia" in col A
-  // Find it
-  let hIdx = rows.findIndex(r => csvVal(r[0]).toLowerCase().trim() === 'referencia');
-  if (hIdx < 0) return;
-  const headers = rows[hIdx].map(c => csvVal(c).trim());
-  // Columns 2+ are tarifas: "PVP 00 (€)", "PVP E0 (€)", etc.
-  const tarifaCols = [];
-  for (let ci = 2; ci < headers.length; ci++) {
-    const h = headers[ci];
-    if (!h) continue;
-    // Extract ID: "PVP 00 (€)" → "00", "PVP E0 (€)" → "E0"
-    const m = h.match(/PVP\s+([\w]+)/i);
-    const id = m ? m[1] : null;
-    if (id) tarifaCols.push({ ci, id, nombre: h });
-  }
-  TARIFAS = tarifaCols.map(t => ({ id: t.id, nombre: t.nombre, precios: {} }));
-  for (let i = hIdx+1; i < rows.length; i++) {
-    const r = rows[i];
-    const modelo = csvVal(r[1]).trim();
-    // Skip section rows (col B empty or contains section text)
-    if (!modelo || modelo.toLowerCase().includes('gama') || modelo.toLowerCase().includes('completar')) continue;
-    // Skip if col A looks like a section header (no numeric ref)
-    const ref = csvVal(r[0]).trim();
-    if (!ref || isNaN(parseInt(ref))) continue;
-    tarifaCols.forEach((t, ti) => {
-      const v = num(r[t.ci]);
-      if (v > 0) TARIFAS[ti].precios[modelo] = v;
-    });
-  }
-  // Remove tarifas with no prices at all
-  TARIFAS = TARIFAS.filter(t => Object.keys(t.precios).length > 0);
-}
-
-function parsePaises(csv) {
-  const rows = parseCSV(csv);
-  // Structure: row 0=title, row 1=note, row 2=headers, row 3+=data with section rows mixed in
-  // Headers: "ID Tarifa", "Continente", "País", "Nota"
-  // Section rows look like: "  AFRICA","","",""  — col A has value, cols B/C/D empty
-  // Data rows: "E0","Africa","Algeria",""
-
-  PAISES = [];
-  // Start from row index 3 (after title, note, header)
-  const dataStart = 3;
-  for (let i = dataStart; i < rows.length; i++) {
-    const r = rows[i];
-    if (!r || r.length < 3) continue;
-    const tarifa    = csvVal(r[0]).trim();
-    const continent = csvVal(r[1]).trim();
-    const pais      = csvVal(r[2]).trim();
-    // Skip section header rows: those have something in col A but empty col B and col C
-    if (!continent && !pais) continue;
-    // Skip rows without a country name
-    if (!pais) continue;
-    // Skip rows without a tarifa (Canada, United States)
-    if (!tarifa || tarifa === '—') continue;
-    PAISES.push({ nombre: pais, tarifa, c_agua: 0.002, c_elec: 0.15 });
-  }
-  // Sort alphabetically
-  PAISES.sort((a,b) => a.nombre.localeCompare(b.nombre));
-}
-
-function parseParams(csv) {
-  const rows = parseCSV(csv);
-  // Find rows with known param names and their values
-  rows.forEach(r => {
-    const label = csvVal(r[0]).toLowerCase();
-    const val   = num(r[1]);
-    if (!val) return;
-    if (label.includes('aclarado'))               document.getElementById('t_aclarado').value = val;
-    else if (label.includes('caliente'))          document.getElementById('t_cal').value = val;
-    else if (label.includes('fr'))               document.getElementById('t_fria').value = val;
-    else if (label.includes('detergente') && label.includes('gr')) document.getElementById('gr_deter').value = val;
-    else if (label.includes('abrill') && label.includes('gr'))     document.getElementById('gr_abrill').value = val;
-  });
-}
-
-/* ── LOADING OVERLAY ────────────────────────────────────── */
-function showLoadingOverlay(show, error=false) {
-  let overlay = document.getElementById('loading_overlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'loading_overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,37,87,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:#fff;font-family:system-ui,sans-serif;gap:16px';
-    document.body.appendChild(overlay);
-  }
-  if (!show) { overlay.style.display = 'none'; return; }
-  overlay.style.display = 'flex';
-  overlay.innerHTML = error
-    ? `<div style="font-size:32px">⚠️</div>
-       <div style="font-size:16px;font-weight:700">Error al cargar los datos</div>
-       <div style="font-size:13px;opacity:.8;max-width:360px;text-align:center">No se pudo conectar con Google Sheets. Comprueba la conexión y recarga la página.</div>
-       <button onclick="location.reload()" style="margin-top:8px;padding:10px 24px;border-radius:8px;border:none;background:#fff;color:#0f2557;font-weight:700;cursor:pointer;font-size:14px">Reintentar</button>`
-    : `<div style="font-size:40px">🍽️</div>
-       <div style="font-size:16px;font-weight:700">Cargando datos de Fagor...</div>
-       <div style="width:200px;height:4px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden">
-         <div style="width:100%;height:100%;background:#fff;border-radius:4px;animation:ldbar 1.4s ease-in-out infinite"></div>
-       </div>
-       <style>@keyframes ldbar{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}</style>`;
+  renderCompCards(); calc();
 }
 
 /* ═══════════════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════════════ */
-const getV = id => parseFloat(document.getElementById(id)?.value) || 0;
-const fmt = (v, d=0) => isFinite(v) ? v.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
-const fmtDiff = (v, d=0) => isFinite(v) ? (v>=0?'+':'')+fmt(v,d)+' €' : '—';
 const $ = id => document.getElementById(id);
+const gV = id => parseFloat($(`${id}`)?.value) || 0;
+const fmt = (v,d=0) => isFinite(v) ? v.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
+const fmtDiff = (v,d=0) => isFinite(v) ? (v>=0?'+':'')+fmt(v,d)+' €' : '—';
 
-function setM(id, v, cls) {
+function fmtROI(y){
+  const yr = Math.floor(y), mo = Math.round((y-yr)*12);
+  const ys = yr===1?t('roi_y'):t('roi_ys'), ms = mo===1?t('roi_m'):t('roi_ms');
+  if(yr===0) return mo+' '+ms;
+  if(mo===0) return yr+' '+ys;
+  return yr+' '+ys+' '+t('roi_and')+' '+mo+' '+ms;
+}
+
+function setVal(id, txt, cls=''){
   const e = $(id); if(!e) return;
-  e.textContent = v;
-  e.className = 'mval ' + (cls||'');
+  e.textContent = txt;
+  if(cls) e.className = 'metric-val '+cls;
 }
-function setR(id, v) {
-  const e = $(id); if(!e) return;
-  e.textContent = fmtDiff(v, 0);
-  e.className = 'val ' + (v >= 0 ? 'pos' : 'neg');
-}
-
-function computeCost(tanq, prod, lh, dias, relevos, horas, c_agua, c_deter_kg, c_abrill_kg, c_elec, deltaT, gr_deter, gr_abrill) {
-  const agua_tanq  = relevos * tanq * dias;
-  const agua_rinse = relevos * horas * lh * dias;
-  const agua_total = agua_tanq + agua_rinse;
-  const cestas_año = prod * horas * dias;
-  const c_deter_l  = c_deter_kg  * gr_deter  / 1000;
-  const c_abrill_l = c_abrill_kg * gr_abrill / 1000;
-  const e_agua  = c_agua    * agua_total;
-  const e_deter = c_deter_l  * agua_total;
-  const e_abrill= c_abrill_l * agua_total;
-  const Q_kwh   = agua_total * 4.186 * deltaT / 3600;
-  const e_elec  = Q_kwh * c_elec;
-  return { e_agua, e_deter, e_abrill, e_elec, agua_total, cestas_año, total: e_agua+e_deter+e_abrill+e_elec };
+function setDiff(id, v){
+  const e=$(id); if(!e) return;
+  e.textContent = fmtDiff(v,0);
+  e.className = 'detail-val '+(v>=0?'pos':'neg');
 }
 
-function getOperatingParams() {
-  const dias    = getV('dias')    || 300;
-  const relevos = getV('relevos') || 2;
-  const horas   = getV('horas')   || 8;
-  const c_agua  = getV('c_agua')  || 0.002;
-  const c_elec  = getV('c_elec')  || 0.11;
-  const c_deter = getV('c_deter') || 5.75;
-  const c_abrill= getV('c_abrill')|| 8.1;
-  const t_ac    = getV('t_aclarado') || 85;
-  const t_cal   = getV('t_cal')   || 55;
-  const t_fria  = getV('t_fria')  || 25;
-  const gr_deter= getV('gr_deter')|| 3;
-  const gr_abrill=getV('gr_abrill')|| 0.2;
-  const deltaT  = t_ac - (waterMode==='hot' ? t_cal : t_fria);
-  return {dias, relevos, horas, c_agua, c_elec, c_deter, c_abrill, gr_deter, gr_abrill, deltaT};
+/* ═══════════════════════════════════════════════
+   CSV / GITHUB LOADING
+═══════════════════════════════════════════════ */
+function parseCSV(text){
+  return text.trim().split('\n').map(line=>{
+    const cols=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='"'){inQ=!inQ;}
+      else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}
+      else{cur+=ch;}
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+function cv(v){ if(v===undefined||v===null) return ''; return String(v).replace(/^"|"$/g,'').trim(); }
+function nv(v){ if(v===undefined||v===null) return 0; const n=parseFloat(String(v).replace(/^"|"$/g,'').trim().replace(/\./g,'').replace(',','.')); return isNaN(n)?0:n; }
+
+async function loadSheetData(){
+  showOverlay(true);
+  try{
+    const [m,ta,p,pa] = await Promise.all([
+      fetch(csvURL('1_Modelos_Fagor')).then(r=>r.text()),
+      fetch(csvURL('2_Tarifas_y_Precios')).then(r=>r.text()),
+      fetch(csvURL('3_Paises_Tarifa')).then(r=>r.text()),
+      fetch(csvURL('4_Parametros_Calculo')).then(r=>r.text()),
+    ]);
+    parseModels(m); parseTarifas(ta); parsePaises(p); parseParams(pa);
+    showOverlay(false); return true;
+  }catch(e){
+    console.error('Load error:',e); showOverlay(false,true); return false;
+  }
+}
+
+function parseModels(csv){
+  const rows=parseCSV(csv); if(rows.length<2) return;
+  MODELS.nuevo=[]; MODELS.viejo=[];
+  for(let i=1;i<rows.length;i++){
+    const r=rows[i]; if(!r||r.length<6) continue;
+    const model=cv(r[1]), prod=nv(r[5]), lh=nv(r[6]), gama=cv(r[7]).toUpperCase();
+    if(!model||!prod) continue;
+    const tanq=nv(r[2])+nv(r[3])+nv(r[4]);
+    const obj={id:model, ref:cv(r[0]), tanq:tanq||nv(r[4]), prod, lh,
+               speeds:[{label:'Máxima',prod,lh}]};
+    if(gama==='CCO') MODELS.viejo.push(obj); else MODELS.nuevo.push(obj);
+  }
+}
+
+function parseTarifas(csv){
+  const rows=parseCSV(csv); if(rows.length<2) return;
+  const headers=rows[0].map(h=>cv(h));
+  const tarifaCols=[];
+  for(let ci=2;ci<headers.length;ci++){
+    const h=headers[ci]; if(!h) continue;
+    const m=h.match(/PVP\s+(\w+)/i);
+    const id=m?m[1]:h;
+    tarifaCols.push({ci,id,nombre:h});
+  }
+  TARIFAS=tarifaCols.map(t=>({id:t.id,nombre:t.nombre,precios:{}}));
+  for(let i=1;i<rows.length;i++){
+    const r=rows[i]; const modelo=cv(r[1]); if(!modelo) continue;
+    tarifaCols.forEach((t,ti)=>{ const v=nv(r[t.ci]); if(v>0) TARIFAS[ti].precios[modelo]=v; });
+  }
+  TARIFAS=TARIFAS.filter(t=>Object.keys(t.precios).length>0);
+}
+
+function parsePaises(csv){
+  const rows=parseCSV(csv); if(rows.length<2) return;
+  PAISES=[];
+  for(let i=1;i<rows.length;i++){
+    const r=rows[i]; if(!r||r.length<3) continue;
+    const tarifa=cv(r[0]), pais=cv(r[2]);
+    if(!tarifa||!pais) continue;
+    PAISES.push({nombre:pais,tarifa,c_agua:0.002,c_elec:0.15});
+  }
+  PAISES.sort((a,b)=>a.nombre.localeCompare(b.nombre));
+}
+
+function parseParams(csv){
+  const rows=parseCSV(csv);
+  rows.forEach(r=>{
+    const lbl=cv(r[0]).toLowerCase(), v=parseFloat(cv(r[1]));
+    if(!v) return;
+    if(lbl.includes('aclarado')){ const e=$('t-aclarado'); if(e) e.value=v; }
+    else if(lbl.includes('caliente')){ const e=$('t-cal'); if(e) e.value=v; }
+    else if(lbl.includes('fria')||lbl.includes('fría')){ const e=$('t-fria'); if(e) e.value=v; }
+    else if(lbl.includes('detergente')){ const e=$('gr-deter'); if(e) e.value=v; }
+    else if(lbl.includes('abrill')){ const e=$('gr-abrill'); if(e) e.value=v; }
+  });
+}
+
+function showOverlay(show, err=false){
+  const o=$('loading-overlay'); if(!o) return;
+  o.style.display=show?'flex':'none';
+  if(err) o.innerHTML=`<div style="font-size:14px;font-weight:600;color:white">Error al cargar los datos</div><button onclick="location.reload()" style="margin-top:12px;padding:8px 20px;border-radius:6px;border:none;background:white;color:black;font-weight:700;cursor:pointer">Reintentar</button>`;
 }
 
 /* ═══════════════════════════════════════════════
    MASTER MODE
 ═══════════════════════════════════════════════ */
-function toggleMasterInput() {
-  $('master_pwd').style.display = 'inline-block';
-  $('btn_master_ok').style.display = 'inline-block';
-  $('btn_master_toggle').style.display = 'none';
-  $('master_pwd').focus();
-}
-function tryMaster() {
-  if ($('master_pwd').value === MASTER_PASS) {
-    masterMode = true; applyMasterState();
-  } else {
-    $('master_pwd').style.borderColor = '#dc2626';
-    setTimeout(() => $('master_pwd').style.borderColor = '', 1200);
+function toggleMasterBar(){
+  const bar=$('master-bar');
+  bar.classList.toggle('visible');
+  if(bar.classList.contains('visible') && !masterMode){
+    $('master-pwd').style.display='inline-block';
+    $('btn-master-enter').style.display='inline-flex';
+    setTimeout(()=>$('master-pwd').focus(),50);
   }
 }
-function exitMaster() {
-  masterMode = false;
-  $('master_pwd').value = '';
-  applyMasterState();
+function tryMaster(){
+  if($('master-pwd').value===MASTER_PASS){ masterMode=true; applyMaster(); }
+  else{ $('master-pwd').style.borderColor='rgba(255,80,80,.6)'; setTimeout(()=>$('master-pwd').style.borderColor='',1200); }
 }
-function applyMasterState() {
-  const lockIds = ['t_aclarado','t_cal','t_fria','gr_deter','gr_abrill'];
-  const lockLabels = ['lock1','lock2','lock3','lock4','lock5'];
-  lockIds.forEach((id,i) => {
-    $(id).disabled = !masterMode;
-    $(lockLabels[i]).style.display = masterMode ? 'none' : 'flex';
-  });
-  $('master_badge_wrap').style.display = masterMode ? 'inline-flex' : 'none';
-  $('master_pwd').style.display = 'none';
-  $('btn_master_ok').style.display = 'none';
-  $('btn_master_toggle').style.display = masterMode ? 'none' : 'inline-block';
-  $('btn_master_exit').style.display = masterMode ? 'inline-block' : 'none';
-  $('master_label').textContent = masterMode ? t('master_label_on') : t('master_label_off');
-  $('master_panel').style.display = masterMode ? 'block' : 'none';
-  if (masterMode) renderMasterPanel();
+function exitMaster(){ masterMode=false; $('master-pwd').value=''; applyMaster(); $('master-bar').classList.remove('visible'); }
+function applyMaster(){
+  ['t-aclarado','t-cal','t-fria','gr-deter','gr-abrill'].forEach(id=>{ const e=$(id); if(e) e.disabled=!masterMode; });
+  $('master-badge').style.display=masterMode?'inline':'none';
+  $('master-pwd').style.display=masterMode?'none':'inline-block';
+  $('btn-master-enter').style.display=masterMode?'none':'inline-flex';
+  $('btn-master-exit').style.display=masterMode?'inline-flex':'none';
+  $('master-panel').style.display=masterMode?'block':'none';
+  if(masterMode) renderMasterPanel();
   calc();
 }
-function changePass() {
-  const old = $('pass_old').value;
-  const n1  = $('pass_new1').value;
-  const n2  = $('pass_new2').value;
-  if (old !== MASTER_PASS) { $('pass_msg').textContent = '❌ Contraseña actual incorrecta'; $('pass_msg').style.color='var(--red-600)'; return; }
-  if (n1 !== n2)           { $('pass_msg').textContent = '❌ Las nuevas contraseñas no coinciden'; $('pass_msg').style.color='var(--red-600)'; return; }
-  if (n1.length < 4)       { $('pass_msg').textContent = '❌ Mínimo 4 caracteres'; $('pass_msg').style.color='var(--red-600)'; return; }
-  MASTER_PASS = n1;
-  $('pass_msg').textContent = '✅ Contraseña cambiada';
-  $('pass_msg').style.color = 'var(--green-600)';
-  $('pass_old').value = $('pass_new1').value = $('pass_new2').value = '';
+function changePass(){
+  const old=$('pass-old').value, n1=$('pass-new1').value, n2=$('pass-new2').value;
+  const msg=$('pass-msg');
+  if(old!==MASTER_PASS){ msg.textContent='❌ Contraseña incorrecta'; msg.style.color='var(--red)'; return; }
+  if(n1!==n2){ msg.textContent='❌ No coinciden'; msg.style.color='var(--red)'; return; }
+  if(n1.length<4){ msg.textContent='❌ Mínimo 4 caracteres'; msg.style.color='var(--red)'; return; }
+  MASTER_PASS=n1; msg.textContent='✓ Cambiada'; msg.style.color='var(--green)';
+  $('pass-old').value=$('pass-new1').value=$('pass-new2').value='';
+}
+async function reloadData(){
+  const msg=$('reload-msg'); if(msg){ msg.textContent='...'; msg.style.color='var(--gray-400)'; }
+  const ok=await loadSheetData();
+  populatePais(); refreshRefSelect();
+  if(masterMode) renderMasterPanel();
+  calc();
+  if(msg){ msg.textContent=ok?'✓ Actualizado':'✗ Error'; msg.style.color=ok?'var(--green)':'var(--red)'; setTimeout(()=>{ if(msg) msg.textContent=''; },3000); }
 }
 
 /* ═══════════════════════════════════════════════
-   TABS
+   TABS (master panel)
 ═══════════════════════════════════════════════ */
-function switchTab(id) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+function switchTab(id){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   $(id).classList.add('active');
-  const tabs = document.querySelectorAll('.tab');
-  const panels = document.querySelectorAll('.tab-panel');
-  panels.forEach((p,i) => { if(p.id===id) tabs[i].classList.add('active'); });
+  const panels=['t-models','t-tarifas','t-paises','t-pass'];
+  const idx=panels.indexOf(id);
+  document.querySelectorAll('.tab-btn')[idx]?.classList.add('active');
 }
 
 /* ═══════════════════════════════════════════════
    MASTER PANEL RENDER
 ═══════════════════════════════════════════════ */
-function renderMasterPanel() {
-  renderModelTable('nuevo', 'models_nuevo_wrap');
-  renderModelTable('viejo', 'models_viejo_wrap');
-  renderTarifasTable();
-  renderPaisesTable();
+function renderMasterPanel(){
+  renderModelsTbl(); renderTarifasTbl(); renderPaisesTbl();
+}
+function renderModelsTbl(){
+  const wrap=$('models-wrap'); if(!wrap) return;
+  const all=[...MODELS.nuevo,...MODELS.viejo];
+  wrap.innerHTML=`<table class="edit-table"><thead><tr><th>Ref</th><th>Modelo</th><th>Tanque(l)</th><th>Prod.máx</th><th>l/h</th><th>Gama</th><th></th></tr></thead><tbody>
+    ${all.map((m,i)=>`<tr>
+      <td><input value="${m.ref||''}" onchange="updateModel(${i},'ref',this.value)"></td>
+      <td><input value="${m.id}" onchange="updateModel(${i},'id',this.value);refreshRefSelect()"></td>
+      <td><input type="number" value="${m.tanq}" onchange="updateModel(${i},'tanq',+this.value);calc()"></td>
+      <td><input type="number" value="${m.prod}" onchange="updateModel(${i},'prod',+this.value);calc()"></td>
+      <td><input type="number" value="${m.lh}" onchange="updateModel(${i},'lh',+this.value);calc()"></td>
+      <td><input value="${i<MODELS.nuevo.length?'WRC/WRA':'CCO'}" readonly style="background:var(--gray-50);color:var(--gray-400)"></td>
+      <td><button class="del-btn" onclick="deleteModel(${i})"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button></td>
+    </tr>`).join('')}
+  </tbody></table>
+  <button class="btn-add btn-sm" style="margin-top:.5rem;font-size:12px" onclick="addModelRow()">+ Añadir modelo</button>`;
+}
+function updateModel(i,k,v){
+  const all=[...MODELS.nuevo,...MODELS.viejo];
+  if(all[i]) all[i][k]=v;
+}
+function deleteModel(i){
+  const all=[...MODELS.nuevo,...MODELS.viejo];
+  all.splice(i,1);
+  const split=all.filter(m=>!m.id.toUpperCase().startsWith('CCO'));
+  const viejo=all.filter(m=>m.id.toUpperCase().startsWith('CCO'));
+  MODELS.nuevo=split; MODELS.viejo=viejo;
+  renderModelsTbl(); refreshRefSelect(); calc();
+}
+function addModelRow(){
+  MODELS.nuevo.push({id:'NUEVO',ref:'',tanq:105,prod:120,lh:200,speeds:[{label:'Máxima',prod:120,lh:200}]});
+  renderModelsTbl(); refreshRefSelect();
 }
 
-function renderModelTable(tipo, wrapperId) {
-  const wrap = $(wrapperId); if(!wrap) return;
-  const models = MODELS[tipo];
-  wrap.innerHTML = `
-    <table class="table-edit" style="margin-bottom:8px">
-      <thead><tr>
-        <th>ID / Nombre</th><th>Tanque (l)</th><th>Prod. (cestas/h)</th><th>Agua (l/h)</th><th></th>
-      </tr></thead>
-      <tbody>
-        ${models.map((m,i) => `<tr>
-          <td><input value="${m.id}" onchange="MODELS['${tipo}'][${i}].id=this.value;refreshSelects();calc()"></td>
-          <td><input type="number" value="${m.tanq}" onchange="MODELS['${tipo}'][${i}].tanq=+this.value;calc()"></td>
-          <td><input type="number" value="${m.prod}" onchange="MODELS['${tipo}'][${i}].prod=+this.value;calc()"></td>
-          <td><input type="number" value="${m.lh}"   onchange="MODELS['${tipo}'][${i}].lh=+this.value;calc()"></td>
-          <td><button class="btn-table-del" onclick="removeModel('${tipo}',${i})">🗑</button></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>`;
-}
-
-function addModelRow(tipo) {
-  MODELS[tipo].push({id:'NUEVO-MODELO', tanq:100, prod:120, lh:200});
-  renderModelTable(tipo, tipo==='nuevo'?'models_nuevo_wrap':'models_viejo_wrap');
-  refreshSelects(); calc();
-}
-function removeModel(tipo, idx) {
-  MODELS[tipo].splice(idx,1);
-  renderModelTable(tipo, tipo==='nuevo'?'models_nuevo_wrap':'models_viejo_wrap');
-  refreshSelects(); calc();
-}
-
-function renderTarifasTable() {
-  const wrap = $('tarifas_wrap'); if(!wrap) return;
-  const allModels = [...MODELS.nuevo, ...MODELS.viejo];
-  wrap.innerHTML = TARIFAS.map((t,ti) => `
-    <div style="margin-bottom:16px;border:1px solid var(--gray-200);border-radius:8px;padding:10px;background:var(--white)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <input value="${t.nombre}" style="flex:1;height:30px;border:1px solid var(--gray-300);border-radius:6px;padding:0 8px;font-size:13px;font-weight:600" onchange="TARIFAS[${ti}].nombre=this.value;renderPaisesTable();populatePaisSelect()">
-        <button class="btn-table-del" onclick="removeTarifa(${ti})">🗑</button>
+function renderTarifasTbl(){
+  const wrap=$('tarifas-wrap'); if(!wrap) return;
+  const allM=[...MODELS.nuevo,...MODELS.viejo];
+  wrap.innerHTML=TARIFAS.map((t,ti)=>`
+    <div style="margin-bottom:1rem;border:1px solid var(--gray-200);border-radius:var(--r);padding:.75rem">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem">
+        <input value="${t.nombre}" style="flex:1;height:30px;border:1px solid var(--gray-200);border-radius:4px;padding:0 8px;font-size:13px;font-weight:600" onchange="TARIFAS[${ti}].nombre=this.value;updatePriceFromTarifa()">
+        <button class="del-btn" onclick="TARIFAS.splice(${ti},1);renderTarifasTbl();populatePais();onPaisChange()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
       </div>
-      <table class="table-edit">
-        <thead><tr><th>Modelo</th><th>PVP (€)</th></tr></thead>
-        <tbody>
-          ${allModels.map(m => `<tr>
-            <td style="color:var(--gray-700)">${m.id}</td>
-            <td><input type="number" value="${t.precios[m.id]||0}" onchange="TARIFAS[${ti}].precios['${m.id}']=+this.value;calc()"></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>`).join('');
+      <table class="edit-table"><thead><tr><th>Modelo</th><th>PVP (€)</th></tr></thead><tbody>
+        ${allM.map(m=>`<tr><td style="color:var(--gray-600)">${m.id}</td><td><input type="number" value="${t.precios[m.id]||''}" placeholder="—" onchange="TARIFAS[${ti}].precios['${m.id}']=+this.value||0;calc()"></td></tr>`).join('')}
+      </tbody></table>
+    </div>`).join('')+`<button class="btn-add btn-sm" style="font-size:12px" onclick="addTarifa()">+ Nueva tarifa</button>`;
+}
+function addTarifa(){
+  const p={}; [...MODELS.nuevo,...MODELS.viejo].forEach(m=>p[m.id]=0);
+  TARIFAS.push({id:'T'+(TARIFAS.length+1),nombre:'Nueva tarifa',precios:p});
+  renderTarifasTbl();
 }
 
-function addTarifaRow() {
-  const precios = {};
-  [...MODELS.nuevo,...MODELS.viejo].forEach(m => precios[m.id] = 0);
-  TARIFAS.push({id:'T'+(TARIFAS.length+1), nombre:'Nueva tarifa', precios});
-  renderTarifasTable(); renderPaisesTable(); populatePaisSelect();
-}
-function removeTarifa(idx) {
-  TARIFAS.splice(idx,1);
-  renderTarifasTable(); renderPaisesTable(); populatePaisSelect();
-}
-
-function renderPaisesTable() {
-  const wrap = $('paises_wrap'); if(!wrap) return;
-  wrap.innerHTML = `
-    <table class="table-edit" style="margin-bottom:8px">
-      <thead><tr>
-        <th>País</th><th>Tarifa</th><th>Agua (€/l)</th><th>Elec. (€/kWh)</th><th></th>
-      </tr></thead>
-      <tbody>
-        ${PAISES.map((p,i) => `<tr>
-          <td><input value="${p.nombre}" onchange="PAISES[${i}].nombre=this.value;populatePaisSelect()"></td>
-          <td><select onchange="PAISES[${i}].tarifa=this.value;populatePaisSelect()">
-            ${TARIFAS.map(t=>`<option value="${t.id}" ${t.id===p.tarifa?'selected':''}>${t.nombre}</option>`).join('')}
-          </select></td>
-          <td><input type="number" step="0.0001" value="${p.c_agua}" onchange="PAISES[${i}].c_agua=+this.value"></td>
-          <td><input type="number" step="0.01" value="${p.c_elec}" onchange="PAISES[${i}].c_elec=+this.value"></td>
-          <td><button class="btn-table-del" onclick="removePais(${i})">🗑</button></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>`;
-}
-
-function addPaisRow() {
-  PAISES.push({nombre:'Nuevo país', tarifa: TARIFAS[0]?.id||'T1', c_agua:0.002, c_elec:0.15});
-  renderPaisesTable(); populatePaisSelect();
-}
-function removePais(idx) {
-  PAISES.splice(idx,1);
-  renderPaisesTable(); populatePaisSelect();
+function renderPaisesTbl(){
+  const wrap=$('paises-wrap'); if(!wrap) return;
+  wrap.innerHTML=`<table class="edit-table"><thead><tr><th>País</th><th>ID Tarifa</th><th></th></tr></thead><tbody>
+    ${PAISES.map((p,i)=>`<tr>
+      <td><input value="${p.nombre}" onchange="PAISES[${i}].nombre=this.value;populatePais()"></td>
+      <td><select onchange="PAISES[${i}].tarifa=this.value;onPaisChange()">${TARIFAS.map(t=>`<option value="${t.id}" ${t.id===p.tarifa?'selected':''}>${t.nombre}</option>`).join('')}</select></td>
+      <td><button class="del-btn" onclick="PAISES.splice(${i},1);renderPaisesTbl();populatePais()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button></td>
+    </tr>`).join('')}
+  </tbody></table>
+  <button class="btn-add btn-sm" style="margin-top:.5rem;font-size:12px" onclick="PAISES.push({nombre:'Nuevo país',tarifa:TARIFAS[0]?.id||'',c_agua:0.002,c_elec:0.15});renderPaisesTbl();populatePais()">+ Añadir país</button>`;
 }
 
 /* ═══════════════════════════════════════════════
-   SELECTS & PAÍS
+   PAÍS & TARIFA
 ═══════════════════════════════════════════════ */
-function populatePaisSelect() {
-  const sel = $('sel_pais'); if(!sel) return;
-  const cur = sel.value;
-  sel.innerHTML = PAISES.map(p=>`<option value="${p.nombre}">${p.nombre}</option>`).join('');
-  if (PAISES.find(p=>p.nombre===cur)) sel.value = cur;
+function populatePais(){
+  const sel=$('sel-pais'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML=PAISES.map(p=>`<option value="${p.nombre}">${p.nombre}</option>`).join('');
+  if(PAISES.find(p=>p.nombre===cur)) sel.value=cur;
   onPaisChange();
 }
-
-function onPaisChange() {
-  const nombre = $('sel_pais')?.value;
-  const pais = PAISES.find(p=>p.nombre===nombre);
-  if (!pais) return;
-  const tarifa = TARIFAS.find(t=>t.id===pais.tarifa);
-  const tdEl=$('tarifa_display'); if(tdEl) tdEl.value=tarifa?tarifa.nombre:'—';
-  if(!_calculating) calc();
-}
-
-function refreshSelects() {
-  const sN = $('sel_nuevo');
-  const curN = sN.value;
-  sN.innerHTML = MODELS.nuevo.map(m=>`<option value="${m.id}">${m.id}</option>`).join('');
-  if (MODELS.nuevo.find(m=>m.id===curN)) sN.value = curN;
+function onPaisChange(){
+  const nombre=$('sel-pais')?.value;
+  const pais=PAISES.find(p=>p.nombre===nombre);
+  if(!pais) return;
+  const tarifa=TARIFAS.find(t=>t.id===pais.tarifa);
+  const td=$('tarifa-display'); if(td) td.value=tarifa?tarifa.nombre:'—';
   updatePriceFromTarifa();
-  calc();
-}
-
-function updatePriceFromTarifa() {
-  const modelId = $('sel_nuevo')?.value;
-  const paisNombre = $('sel_pais')?.value;
-  const pais = PAISES.find(p=>p.nombre===paisNombre);
-  if (!pais) return;
-  const tarifa = TARIFAS.find(t=>t.id===pais.tarifa);
-  const pvp = tarifa?.precios[modelId] || 0;
-  const pvpEl=$('pvp_nuevo'); if(pvpEl) pvpEl.value=pvp;
-  const refEl=$('ref_tarifa_label'); if(refEl) refEl.value=tarifa?.nombre||'—';
-  const dto = getV('dto_fagor') / 100;
-  const netoEl=$('pvp_nuevo_neto'); if(netoEl) netoEl.value=fmt(pvp*(1-dto),0);
-  // no calc() call here — already inside _calc
+  if(!_calc_lock) calc();
 }
 
 /* ═══════════════════════════════════════════════
-   FAGOR EXTRA ROWS
+   REFERENCE MODEL
 ═══════════════════════════════════════════════ */
-function addFagorExtra() {
-  fagorExtraList.push({id: ++fagorExtraId});
-  renderFagorExtraForms();
-  calc();
-}
-function removeFagorExtra(id) {
-  fagorExtraList = fagorExtraList.filter(f=>f.id!==id);
-  renderFagorExtraForms();
-  calc();
-}
-function renderFagorExtraForms() {
-  const container = $('fagor_extra_list'); if(!container) return;
-  container.innerHTML = '';
-  fagorExtraList.forEach(f => {
-    const div = document.createElement('div');
-    div.className = 'comp-block';
-    div.innerHTML = `
-      <div class="comp-header">
-        <span class="comp-name">🟦 Modelo Fagor adicional</span>
-        <div class="comp-actions">
-          <button class="icon-btn del" onclick="removeFagorExtra(${f.id})" title="Eliminar">🗑️</button>
-        </div>
-      </div>
-      <div class="g4">
-        <div class="fld">
-          <label>Modelo <span class="chip chip-new">WRC / WRA</span></label>
-          <select id="fe_sel_${f.id}" onchange="updateFagorExtraPrice(${f.id});calc()">
-            ${MODELS.nuevo.map(m=>`<option value="${m.id}">${m.id}</option>`).join('')}
-          </select>
-        </div>
-        <div class="fld"><label>${t('fe_pvp_tarifa')}</label><input type="number" id="fe_pvp_${f.id}" value="0" readonly style="background:var(--gray-100)"></div>
-        <div class="fld"><label>${t('fe_pvp_neto')}</label><input type="number" id="fe_pvp_neto_${f.id}" value="0" readonly style="background:var(--gray-100);color:var(--green-700);font-weight:700"></div>
-      </div>`;
-    container.appendChild(div);
-    updateFagorExtraPrice(f.id);
-  });
-}
-function updateFagorExtraPrice(fid) {
-  const modelId = $(`fe_sel_${fid}`)?.value;
-  const paisNombre = $('sel_pais')?.value;
-  const pais = PAISES.find(p=>p.nombre===paisNombre);
-  const tarifa = TARIFAS.find(t=>t.id===pais?.tarifa);
-  const pvp = tarifa?.precios[modelId] || 0;
-  const dto = getV('dto_fagor') / 100;
-  if ($(`fe_pvp_${fid}`)) $(`fe_pvp_${fid}`).value = pvp;
-  if ($(`fe_pvp_neto_${fid}`)) $(`fe_pvp_neto_${fid}`).value = fmt(pvp*(1-dto),0);
+function refreshRefSelect(){
+  const sel=$('sel-ref'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML=MODELS.nuevo.map(m=>`<option value="${m.id}">${m.id}</option>`).join('');
+  if(MODELS.nuevo.find(m=>m.id===cur)) sel.value=cur;
+  onRefModelChange();
 }
 
-/* ═══════════════════════════════════════════════
-   COMPETIDORES
-═══════════════════════════════════════════════ */
-function addComp() {
-  if (compList.length >= 10) return;
-  compList.push({id: ++compId, editing: true});
-  renderCompForms();
-  if (compList.length >= 10) $('btn_add_comp').style.display = 'none';
-  calc();
-}
-function removeComp(id) {
-  compList = compList.filter(c=>c.id!==id);
-  renderCompForms();
-  $('btn_add_comp').style.display = 'flex';
-  calc();
-}
-function toggleEditComp(id) {
-  const c = compList.find(c=>c.id===id);
-  if(c) { c.editing = !c.editing; renderCompForms(); calc(); }
-}
-function renderCompForms() {
-  const container = $('comp_list'); if(!container) return;
-  container.innerHTML = '';
-  compList.forEach(c => {
-    const div = document.createElement('div');
-    div.className = 'comp-block';
-    const marca  = c.marca  || '';
-    const modelo = c.modelo || '';
-    const pvp    = c.pvp    || 0;
-    const dto    = c.dto    !== undefined ? c.dto : 50;
-    const tanq   = c.tanq   || 100;
-    const prod   = c.prod   || 120;
-    const lh     = c.lh     || 200;
-    div.innerHTML = `
-      <div class="comp-header">
-        <span class="comp-name">🏭 ${marca||t('h3_comp')} ${modelo}</span>
-        <div class="comp-actions">
-          <button class="icon-btn del" onclick="removeComp(${c.id})" title="Eliminar">🗑️</button>
-        </div>
-      </div>
-      <div class="g4" style="margin-bottom:8px">
-        <div class="fld"><label>${t('comp_marca')}</label><input type="text" id="cm_marca_${c.id}" value="${marca}" placeholder="Ej: Meiko" oninput="syncComp(${c.id})"></div>
-        <div class="fld"><label>${t('comp_modelo')}</label><input type="text" id="cm_modelo_${c.id}" value="${modelo}" placeholder="Ej: M-iQ 45" oninput="syncComp(${c.id})"></div>
-        <div class="fld"><label>${t('comp_pvp')}</label><input type="number" id="cm_pvp_${c.id}" value="${pvp}" step="100" min="0" oninput="syncComp(${c.id})"></div>
-        <div class="fld"><label>${t('comp_dto')}</label><input type="number" id="cm_dto_${c.id}" value="${dto}" step="0.1" min="0" max="100" oninput="syncComp(${c.id})"><span class="field-note">${t('comp_dto_note')}</span></div>
-      </div>
-      <div class="g4">
-        <div class="fld"><label>${t('comp_tanq')}</label><input type="number" id="cm_tanq_${c.id}" value="${tanq}" min="0" oninput="syncComp(${c.id})"><span class="field-note">${t('comp_tanq_note')}</span></div>
-        <div class="fld"><label>${t('comp_prod')}</label><input type="number" id="cm_prod_${c.id}" value="${prod}" min="1" oninput="syncComp(${c.id})"></div>
-        <div class="fld"><label>${t('comp_lh')}</label><input type="number" id="cm_lh_${c.id}" value="${lh}" min="1" oninput="syncComp(${c.id})"></div>
-      </div>`;
-    container.appendChild(div);
-  });
-}
-function syncComp(id) {
-  const c = compList.find(c=>c.id===id); if(!c) return;
-  c.marca  = $(`cm_marca_${id}`)?.value  || '';
-  c.modelo = $(`cm_modelo_${id}`)?.value || '';
-  c.pvp    = parseFloat($(`cm_pvp_${id}`)?.value)  || 0;
-  c.dto    = parseFloat($(`cm_dto_${id}`)?.value)   || 0;
-  c.tanq   = parseFloat($(`cm_tanq_${id}`)?.value)  || 100;
-  c.prod   = parseFloat($(`cm_prod_${id}`)?.value)  || 120;
-  c.lh     = parseFloat($(`cm_lh_${id}`)?.value)    || 200;
-  calc();
-}
-
-/* ═══════════════════════════════════════════════
-   MAIN CALC
-═══════════════════════════════════════════════ */
-function calc() {
-  if (_calculating) return;
-  _calculating = true;
-  try { _calc(); } finally { _calculating = false; }
-}
-function _calc() {
+function onRefModelChange(){
+  const modelId=$('sel-ref')?.value;
+  const m=MODELS.nuevo.find(x=>x.id===modelId)||MODELS.viejo.find(x=>x.id===modelId);
+  if(!m) return;
+  // Build speed options
+  const velSel=$('sel-vel-ref'); if(!velSel) return;
+  const speeds=getModelSpeeds(m);
+  velSel.innerHTML=speeds.map((s,i)=>`<option value="${i}">${s.label} — ${s.prod} cestas/h</option>`).join('');
   updatePriceFromTarifa();
-  fagorExtraList.forEach(f => updateFagorExtraPrice(f.id));
+  if(!_calc_lock) calc();
+}
 
-  const p = getOperatingParams();
-  const mN = MODELS.nuevo.find(m => m.id === $('sel_nuevo')?.value);
-  if (!mN) return;
+function getModelSpeeds(m){
+  // For now single speed (max). Future: parse multiple speeds from CSV
+  return [{label:'Máxima',prod:m.prod,lh:m.lh}];
+}
 
-  const cN = computeCost(mN.tanq, mN.prod, mN.lh, p.dias, p.relevos, p.horas, p.c_agua, p.c_deter, p.c_abrill, p.c_elec, p.deltaT, p.gr_deter, p.gr_abrill);
-  const pvp_nuevo = getV('pvp_nuevo');
-  const dto_fagor = getV('dto_fagor') / 100;
-  const pvp_nuevo_neto = pvp_nuevo * (1 - dto_fagor);
+function updatePriceFromTarifa(){
+  const modelId=$('sel-ref')?.value;
+  const pais=PAISES.find(p=>p.nombre===$('sel-pais')?.value);
+  const tarifa=TARIFAS.find(t=>t.id===pais?.tarifa);
+  const pvp=tarifa?.precios[modelId]||0;
+  const dto=gV('dto-fagor')/100;
+  const pvpEl=$('pvp-ref'); if(pvpEl) pvpEl.value=pvp;
+  const netoEl=$('pvp-ref-neto'); if(netoEl) netoEl.value=fmt(pvp*(1-dto),0);
+}
+
+/* ═══════════════════════════════════════════════
+   COMP CARDS
+═══════════════════════════════════════════════ */
+function addFagor(){
+  if(compList.length>=10) return;
+  const id=++compId;
+  compList.push({id,type:'fagor',modelId:MODELS.nuevo[0]?.id||'',pvp:0,dto:gV('dto-fagor'),editing:true,isNew:true});
+  renderCompCards(); scrollToCard(id);
+}
+function addComp(){
+  if(compList.length>=10) return;
+  const id=++compId;
+  compList.push({id,type:'comp',marca:'',modelo:'',pvp:0,dto:50,tanq:100,prod:120,lh:200,editing:true,isNew:true});
+  renderCompCards(); scrollToCard(id);
+}
+function removeComp(id){
+  compList=compList.filter(c=>c.id!==id);
+  renderCompCards(); calc();
+}
+function editCompFromTable(id){
+  const c=compList.find(x=>x.id===id); if(!c) return;
+  c.editing=true; c.isNew=false;
+  renderCompCards();
+  scrollToCard(id);
+}
+function scrollToCard(id){
+  setTimeout(()=>{ const el=document.getElementById('card-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'center'}); },50);
+}
+
+function renderCompCards(){
+  const container=$('comp-cards'); if(!container) return;
+  if(compList.length===0){ container.innerHTML=''; return; }
+  container.innerHTML=compList.map(c=>renderCard(c)).join('');
+}
+
+function renderCard(c){
+  const pais=PAISES.find(p=>p.nombre===$('sel-pais')?.value);
+  const tarifa=TARIFAS.find(t=>t.id===pais?.tarifa);
+  const dto=gV('dto-fagor');
+
+  if(!c.editing){
+    // Collapsed view
+    const label=c.type==='fagor'?c.modelId:`${c.marca||'—'} ${c.modelo||''}`.trim();
+    const tagClass=c.type==='fagor'?'tag-fagor':'tag-comp';
+    const tagTxt=c.type==='fagor'?t('tag_fagor'):t('tag_comp');
+    return `<div class="model-card" id="card-${c.id}">
+      <div class="model-card-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="model-tag ${tagClass}">${tagTxt}</span>
+          <span style="font-size:13px;font-weight:600;color:var(--gray-800)">${label}</span>
+        </div>
+        <div class="card-actions">
+          <button class="icon-btn" onclick="editCard(${c.id})" title="${t('btn_save')}">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1.5 9.5l2-2 7-7 2 2-7 7-2 2H1.5v-2z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn del-ico" onclick="removeComp(${c.id})">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2l9 9M11 2l-9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Expanded / editing view
+  if(c.type==='fagor'){
+    const modelOpts=MODELS.nuevo.map(m=>`<option value="${m.id}" ${m.id===c.modelId?'selected':''}>${m.id}</option>`).join('');
+    const pvpTarifa=tarifa?.precios[c.modelId]||0;
+    const pvpNeto=pvpTarifa*(1-dto/100);
+    return `<div class="model-card" id="card-${c.id}">
+      <div class="model-card-header">
+        <span class="model-tag tag-fagor">${t('tag_fagor')}</span>
+        <div class="card-actions">
+          <button class="icon-btn del-ico" onclick="removeComp(${c.id})">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2l9 9M11 2l-9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="grid-4" style="margin-bottom:.75rem">
+        <div class="field"><label>${t('lbl_modelo')}</label>
+          <select onchange="updateCompField(${c.id},'modelId',this.value);renderCompCards();calc()">${modelOpts}</select>
+        </div>
+        <div class="field"><label>${t('lbl_pvp_tarifa')}</label><input type="number" value="${pvpTarifa}" readonly></div>
+        <div class="field"><label>${t('lbl_pvp_neto')}</label><input type="number" value="${fmt(pvpNeto,0)}" readonly></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" onclick="saveCard(${c.id})">${c.isNew?t('btn_add'):t('btn_save')}</button>
+        ${!c.isNew?`<button class="btn btn-ghost btn-sm" onclick="cancelEdit(${c.id})">${t('btn_cancel')}</button>`:''}
+      </div>
+    </div>`;
+  }
+
+  // Competitor
+  return `<div class="model-card" id="card-${c.id}">
+    <div class="model-card-header">
+      <span class="model-tag tag-comp">${t('tag_comp')}</span>
+      <div class="card-actions">
+        <button class="icon-btn del-ico" onclick="removeComp(${c.id})">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2l9 9M11 2l-9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="grid-4" style="margin-bottom:.75rem">
+      <div class="field"><label>${t('lbl_marca')}</label><input type="text" value="${c.marca||''}" placeholder="Meiko, Winterhalter..." oninput="updateCompField(${c.id},'marca',this.value)"></div>
+      <div class="field"><label>${t('lbl_modelo_comp')}</label><input type="text" value="${c.modelo||''}" placeholder="M-iQ 45..." oninput="updateCompField(${c.id},'modelo',this.value)"></div>
+      <div class="field"><label>${t('lbl_pvp_comp')}</label><input type="number" value="${c.pvp||''}" placeholder="0" oninput="updateCompField(${c.id},'pvp',+this.value)"></div>
+      <div class="field"><label>${t('lbl_dto_comp')}</label><input type="number" value="${c.dto!==undefined?c.dto:50}" step="0.1" oninput="updateCompField(${c.id},'dto',+this.value)"><span class="hint">${t('hint_dto')}</span></div>
+    </div>
+    <div class="grid-4" style="margin-bottom:.75rem">
+      <div class="field"><label>${t('lbl_tanq')}</label><input type="number" value="${c.tanq||''}" placeholder="100" oninput="updateCompField(${c.id},'tanq',+this.value)"><span class="hint">${t('lbl_tanq_note')}</span></div>
+      <div class="field"><label>${t('lbl_prod')}</label><input type="number" value="${c.prod||''}" placeholder="120" oninput="updateCompField(${c.id},'prod',+this.value)"></div>
+      <div class="field"><label>${t('lbl_lh')}</label><input type="number" value="${c.lh||''}" placeholder="200" oninput="updateCompField(${c.id},'lh',+this.value)"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary btn-sm" onclick="saveCard(${c.id})">${c.isNew?t('btn_add'):t('btn_save')}</button>
+      ${!c.isNew?`<button class="btn btn-ghost btn-sm" onclick="cancelEdit(${c.id})">${t('btn_cancel')}</button>`:''}
+    </div>
+  </div>`;
+}
+
+function updateCompField(id,key,val){
+  const c=compList.find(x=>x.id===id); if(c) c[key]=val;
+}
+function saveCard(id){
+  const c=compList.find(x=>x.id===id); if(!c) return;
+  c.editing=false; c.isNew=false;
+  renderCompCards(); calc();
+}
+function cancelEdit(id){
+  const c=compList.find(x=>x.id===id); if(!c) return;
+  c.editing=false; renderCompCards();
+}
+function editCard(id){
+  const c=compList.find(x=>x.id===id); if(!c) return;
+  c.editing=true; c.isNew=false; renderCompCards(); scrollToCard(id);
+}
+
+/* ═══════════════════════════════════════════════
+   COMPUTE
+═══════════════════════════════════════════════ */
+function getParams(){
+  return{
+    dias:gV('dias')||300, relevos:gV('relevos')||2, horas:gV('horas')||8,
+    c_agua:gV('c-agua')||0.002, c_elec:gV('c-elec')||0.15,
+    c_deter:gV('c-deter')||5.75, c_abrill:gV('c-abrill')||8.1,
+    t_ac:gV('t-aclarado')||85, t_cal:gV('t-cal')||55, t_fria:gV('t-fria')||25,
+    gr_deter:gV('gr-deter')||3, gr_abrill:gV('gr-abrill')||0.2,
+  };
+}
+
+function computeCost(tanq,prod,lh,p){
+  const deltaT=p.t_ac-(waterMode==='hot'?p.t_cal:p.t_fria);
+  const agua_total=(p.relevos*tanq + p.relevos*p.horas*lh)*p.dias;
+  const cestas=prod*p.horas*p.dias;
+  const e_agua=p.c_agua*agua_total;
+  const e_deter=(p.c_deter*p.gr_deter/1000)*agua_total;
+  const e_abrill=(p.c_abrill*p.gr_abrill/1000)*agua_total;
+  const e_elec=(agua_total*4.186*deltaT/3600)*p.c_elec;
+  return{e_agua,e_deter,e_abrill,e_elec,cestas,agua_total,total:e_agua+e_deter+e_abrill+e_elec};
+}
+
+function calc(){
+  if(_calc_lock) return;
+  _calc_lock=true;
+  try{ _calc(); }finally{ _calc_lock=false; }
+}
+
+function _calc(){
+  updatePriceFromTarifa();
+  const p=getParams();
+  const refId=$('sel-ref')?.value;
+  const refM=[...MODELS.nuevo,...MODELS.viejo].find(m=>m.id===refId);
+  if(!refM){ $('iceberg-section').style.display='none'; return; }
+
+  const velIdx=parseInt($('sel-vel-ref')?.value||0);
+  const speeds=getModelSpeeds(refM);
+  const spd=speeds[velIdx]||speeds[0];
+  const cRef=computeCost(refM.tanq,spd.prod,spd.lh,p);
+  const dto=gV('dto-fagor')/100;
+  const pvpRef=gV('pvp-ref');
+  const pvpRefNeto=pvpRef*(1-dto);
 
   // Update neto display
-  $('pvp_nuevo_neto').value = fmt(pvp_nuevo_neto, 0);
+  const netoEl=$('pvp-ref-neto'); if(netoEl) netoEl.value=fmt(pvpRefNeto,0);
 
-  renderCompTable(mN, cN, p, pvp_nuevo_neto);
-  renderIceberg(cN, pvp_nuevo_neto);
-  updateComparadoSelect(mN, cN, p);
-  calcComparativa();
+  // Iceberg
+  renderIceberg(cRef,pvpRefNeto);
+
+  // Build rows for comparison table
+  const rows=[{label:refId,type:'ref',tanq:refM.tanq,prod:spd.prod,lh:spd.lh,pvpNeto:pvpRefNeto,cost:cRef,cid:null}];
+
+  compList.filter(c=>!c.editing).forEach(c=>{
+    if(c.type==='fagor'){
+      const m=[...MODELS.nuevo,...MODELS.viejo].find(x=>x.id===c.modelId); if(!m) return;
+      const pais=PAISES.find(pp=>pp.nombre===$('sel-pais')?.value);
+      const tarifa=TARIFAS.find(t=>t.id===pais?.tarifa);
+      const pvp=tarifa?.precios[m.id]||0;
+      const pvpNeto=pvp*(1-dto);
+      const cost=computeCost(m.tanq,m.prod,m.lh,p);
+      rows.push({label:m.id,type:'fagor',tanq:m.tanq,prod:m.prod,lh:m.lh,pvpNeto,cost,cid:c.id});
+    } else {
+      const cost=computeCost(c.tanq||100,c.prod||120,c.lh||200,p);
+      const pvpNeto=c.pvp>0?c.pvp*(1-(c.dto||0)/100):null;
+      const lbl=`${c.marca||'—'} ${c.modelo||''}`.trim();
+      rows.push({label:lbl,type:'comp',tanq:c.tanq||100,prod:c.prod||120,lh:c.lh||200,pvpNeto,cost,cid:c.id});
+    }
+  });
+
+  const hasComp=rows.length>1;
+  $('table-section').style.display=hasComp?'block':'none';
+  $('detail-section').style.display=hasComp?'block':'none';
+  $('download-section').style.display=hasComp?'block':'none';
+
+  if(hasComp){
+    renderTable(rows,cRef);
+    updateDetailSelect(rows,cRef,p);
+  }
 }
 
 /* ═══════════════════════════════════════════════
-   COMPARISON TABLE
+   TABLE
 ═══════════════════════════════════════════════ */
-function renderCompTable(mN, cN, p, pvp_nuevo_neto) {
-  const allRows = [];
-  const dto_fagor = getV('dto_fagor') / 100;
-  const paisNombre = $('sel_pais')?.value;
-  const pais = PAISES.find(pp=>pp.nombre===paisNombre);
-  const tarifa = TARIFAS.find(t=>t.id===pais?.tarifa);
+function renderTable(rows,cRef){
+  const table=$('comp-table'); if(!table) return;
+  const cols=[t('col_equipo'),t('col_tanque'),t('col_prod'),t('col_agua_lh'),
+              t('col_pvp_neto'),t('col_coste'),t('col_ahorro'),t('col_sobrecoste'),t('col_roi'),''];
+  table.querySelector('thead').innerHTML=`<tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr>`;
 
-  // Reference Fagor
-  allRows.push({
-    label: mN.id, type: 'fagor-ref',
-    tanq: mN.tanq, prod: mN.prod, lh: mN.lh,
-    pvp_neto: pvp_nuevo_neto,
-    cost_obj: cN
-  });
-
-  // Extra Fagor models
-  fagorExtraList.forEach(f => {
-    const modelId = $(`fe_sel_${f.id}`)?.value;
-    const m = MODELS.nuevo.find(x=>x.id===modelId); if(!m) return;
-    const cM = computeCost(m.tanq,m.prod,m.lh,p.dias,p.relevos,p.horas,p.c_agua,p.c_deter,p.c_abrill,p.c_elec,p.deltaT,p.gr_deter,p.gr_abrill);
-    const pvp = tarifa?.precios[modelId] || 0;
-    const pvp_neto = pvp * (1 - dto_fagor);
-    allRows.push({ label: m.id, type: 'fagor-extra', feId: f.id, tanq: m.tanq, prod: m.prod, lh: m.lh, pvp_neto, cost_obj: cM });
-  });
-
-  // Competitors
-  compList.forEach(c => {
-    const cC = computeCost(c.tanq||100, c.prod||120, c.lh||200, p.dias,p.relevos,p.horas,p.c_agua,p.c_deter,p.c_abrill,p.c_elec,p.deltaT,p.gr_deter,p.gr_abrill);
-    const pvp_neto = c.pvp > 0 ? c.pvp * (1 - (c.dto||0)/100) : null;
-    allRows.push({ label: `${c.marca||'Competidor'} ${c.modelo||''}`.trim(), type: 'comp', compId: c.id, tanq: c.tanq||100, prod: c.prod||120, lh: c.lh||200, pvp_neto, cost_obj: cC });
-  });
-
-  const hasComp = allRows.length > 1;
-  const section = $('comp_results_section');
-  section.style.display = hasComp ? 'block' : 'none';
-  if (!hasComp) return;
-
-  const cols = [t('col_equipo'),t('col_tanque'),t('col_prod'),t('col_agua_lh'),t('col_pvp_neto'),t('col_coste_cesta'),t('col_ahorro'),t('col_sobrecoste'),t('col_roi'),''];
-  const table = $('comp_table');
-  table.querySelector('thead').innerHTML = '<tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr>';
-
-  table.querySelector('tbody').innerHTML = allRows.map((r,idx) => {
-    const isRef = r.type === 'fagor-ref';
-    const isFagor = r.type === 'fagor-ref' || r.type === 'fagor-extra';
-    const cr = r.cost_obj.cestas_año;
-    const cost_cesta = r.cost_obj.total / cr;
-
-    let ah_total = null, sobrecoste = null, roi_str = '—';
-    if (!isRef) {
-      const crRef = cN.cestas_año;
-      ah_total =
-        (r.cost_obj.e_agua/cr   - cN.e_agua/cN.cestas_año)  * crRef +
-        (r.cost_obj.e_deter/cr  - cN.e_deter/cN.cestas_año) * crRef +
-        (r.cost_obj.e_abrill/cr - cN.e_abrill/cN.cestas_año)* crRef +
-        (r.cost_obj.e_elec/cr   - cN.e_elec/cN.cestas_año)  * crRef;
-      if (r.pvp_neto !== null && pvp_nuevo_neto > 0) {
-        sobrecoste = pvp_nuevo_neto - r.pvp_neto;
-        const roi_v = ah_total !== 0 ? sobrecoste / ah_total : Infinity;
-        roi_str = isFinite(roi_v) && roi_v > 0 ? fmtROI(roi_v) : (roi_v <= 0 ? '< 0' : '—');
+  table.querySelector('tbody').innerHTML=rows.map(r=>{
+    const isRef=r.type==='ref';
+    const cc=r.cost.cestas;
+    const costPerCesta=r.cost.total/cc;
+    let ah='—',sb='—',roi='—';
+    if(!isRef){
+      const crRef=cRef.cestas;
+      const ahV=(r.cost.e_agua/cc-cRef.e_agua/cRef.cestas)*crRef
+               +(r.cost.e_deter/cc-cRef.e_deter/cRef.cestas)*crRef
+               +(r.cost.e_abrill/cc-cRef.e_abrill/cRef.cestas)*crRef
+               +(r.cost.e_elec/cc-cRef.e_elec/cRef.cestas)*crRef;
+      ah=`<span class="${ahV>=0?'pos':'neg'}">${fmtDiff(ahV,0)}</span>`;
+      if(r.pvpNeto!==null){
+        const sbV=rows[0].pvpNeto-r.pvpNeto;
+        sb=`<span class="${sbV<=0?'pos':'neg'}">${fmtDiff(sbV,0)}</span>`;
+        const roiV=ahV!==0?sbV/ahV:Infinity;
+        roi=isFinite(roiV)&&roiV>0?fmtROI(roiV):(roiV<=0?'< 0':'—');
       }
     }
-
-    const pvpStr  = r.pvp_neto !== null ? fmt(r.pvp_neto,0)+' €' : '—';
-    const ahStr   = isRef ? '<span style="color:var(--gray-400)">ref.</span>' :
-                    ah_total !== null ? `<span class="${ah_total>=0?'td-pos':'td-neg'}">${fmtDiff(ah_total,0)}</span>` : '—';
-    const sbStr   = isRef ? '<span style="color:var(--gray-400)">ref.</span>' :
-                    sobrecoste !== null ? `<span class="${sobrecoste<=0?'td-pos':'td-neg'}">${fmtDiff(sobrecoste,0)}</span>` : '—';
-    const rowCls  = isRef ? 'fagor-row' : (isFagor ? 'fagor-extra-row' : '');
-    const chip    = isRef ? '<span class="chip chip-new">Referencia</span>' : (isFagor ? '<span class="chip chip-new">Fagor</span>' : '');
-
-    // Action buttons — ref row has no actions, fagor-extra scrolls to its block, comp opens edit
-    let actionCell = '<td></td>';
-    if (!isRef) {
-      if (r.type === 'fagor-extra') {
-        actionCell = `<td style="text-align:center"><button class="icon-btn del" onclick="removeFagorExtra(${r.feId})" title="Eliminar" style="margin:0 auto">🗑️</button></td>`;
-      } else {
-        actionCell = `<td style="text-align:center;white-space:nowrap">
-          <button class="icon-btn edit" onclick="scrollToComp(${r.compId})" title="Editar" style="margin:0 2px">✏️</button>
-          <button class="icon-btn del"  onclick="removeComp(${r.compId});calc()" title="Eliminar" style="margin:0 2px">🗑️</button>
-        </td>`;
-      }
-    }
-
-    return `<tr class="${rowCls}">
-      <td>${r.label}${chip}</td>
-      <td>${r.tanq}</td><td>${r.prod}</td><td>${r.lh}</td>
-      <td>${pvpStr}</td>
-      <td>${fmt(cost_cesta,4)} €</td>
-      <td>${ahStr}</td>
-      <td>${sbStr}</td>
-      <td>${roi_str}</td>
-      ${actionCell}
-    </tr>`;
+    const pvpStr=r.pvpNeto!==null?fmt(r.pvpNeto,0)+' €':'—';
+    const rowCls=isRef?'row-ref':'';
+    const nameCell=isRef?`<span class="ref-label">${r.label}</span>`:r.label;
+    const editBtn=!isRef&&r.cid?`<button class="icon-btn btn-sm" onclick="editCompFromTable(${r.cid})" title="Editar" style="margin:0 auto">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 9l1.5-1.5 6-6L10 3l-6 6L2.5 10.5H1V9z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>`:'';
+    return `<tr class="${rowCls}"><td>${nameCell}</td><td>${r.tanq}</td><td>${r.prod}</td><td>${r.lh}</td><td>${pvpStr}</td><td>${fmt(costPerCesta,4)} €</td><td>${isRef?'<span style="color:var(--gray-300)">ref.</span>':ah}</td><td>${isRef?'<span style="color:var(--gray-300)">ref.</span>':sb}</td><td>${isRef?'<span style="color:var(--gray-300)">ref.</span>':roi}</td><td style="text-align:center">${editBtn}</td></tr>`;
   }).join('');
+
+  $('table-note').textContent=t('note_tabla');
 }
 
 /* ═══════════════════════════════════════════════
-   COMPARADO SELECT
+   DETAIL COMPARISON
 ═══════════════════════════════════════════════ */
-function updateComparadoSelect(mN, cN, p) {
-  const sel = $('sel_comparado'); if(!sel) return;
-  const cur = sel.value;
-  const opts = [];
-  const dto_fagor = getV('dto_fagor')/100;
-  const paisNombre = $('sel_pais')?.value;
-  const pais = PAISES.find(pp=>pp.nombre===paisNombre);
-  const tarifa = TARIFAS.find(t=>t.id===pais?.tarifa);
-
-  // Fagor extra
-  fagorExtraList.forEach(f => {
-    const modelId = $(`fe_sel_${f.id}`)?.value;
-    if (modelId) opts.push({val: 'fe_'+f.id, lbl: modelId+' (Fagor)'});
-  });
-  // Competitors
-  compList.forEach(c => {
-    const lbl = `${c.marca||'Competidor'} ${c.modelo||''}`.trim() || 'Competidor '+c.id;
-    opts.push({val: 'comp_'+c.id, lbl});
-  });
-
-  if (opts.length === 0) {
-    sel.innerHTML = '<option value="">— Añade modelos arriba —</option>';
-    $('comp_ref_label').value = mN.id;
-    return;
-  }
-  sel.innerHTML = opts.map(o=>`<option value="${o.val}">${o.lbl}</option>`).join('');
-  if (opts.find(o=>o.val===cur)) sel.value = cur;
-  $('comp_ref_label').value = mN.id;
+function updateDetailSelect(rows,cRef,p){
+  const sel=$('sel-detail'); if(!sel) return;
+  const cur=sel.value;
+  const nonRef=rows.filter(r=>r.type!=='ref');
+  sel.innerHTML=nonRef.map((r,i)=>`<option value="${i}">${r.label}</option>`).join('');
+  if(nonRef.findIndex(r=>r.label===cur)>=0) sel.value=cur;
+  $('detail-ref-label').value=rows[0].label;
+  calcDetail(rows,cRef);
 }
 
-function calcComparativa() {
-  const p = getOperatingParams();
-  const mN = MODELS.nuevo.find(m=>m.id===$('sel_nuevo')?.value); if(!mN) return;
-  const cN = computeCost(mN.tanq,mN.prod,mN.lh,p.dias,p.relevos,p.horas,p.c_agua,p.c_deter,p.c_abrill,p.c_elec,p.deltaT,p.gr_deter,p.gr_abrill);
-  const selVal = $('sel_comparado')?.value; if(!selVal) return;
-
-  let tanq2, prod2, lh2, pvp2_neto = null;
-  const dto_fagor = getV('dto_fagor')/100;
-  const paisNombre = $('sel_pais')?.value;
-  const pais = PAISES.find(pp=>pp.nombre===paisNombre);
-  const tarifa = TARIFAS.find(t=>t.id===pais?.tarifa);
-
-  if (selVal.startsWith('fe_')) {
-    const fid = parseInt(selVal.split('_')[1]);
-    const modelId = $(`fe_sel_${fid}`)?.value;
-    const m2 = MODELS.nuevo.find(x=>x.id===modelId); if(!m2) return;
-    tanq2=m2.tanq; prod2=m2.prod; lh2=m2.lh;
-    const pvp2 = tarifa?.precios[modelId]||0;
-    pvp2_neto = pvp2*(1-dto_fagor);
-  } else {
-    const cid = parseInt(selVal.split('_')[1]);
-    const c2 = compList.find(c=>c.id===cid); if(!c2) return;
-    tanq2=c2.tanq||100; prod2=c2.prod||120; lh2=c2.lh||200;
-    pvp2_neto = c2.pvp>0 ? c2.pvp*(1-(c2.dto||0)/100) : null;
+function calcDetail(rows,cRef){
+  const sel=$('sel-detail'); if(!sel) return;
+  if(!rows){
+    // Re-compute rows on demand
+    calc(); return;
   }
+  const nonRef=rows.filter(r=>r.type!=='ref');
+  const idx=parseInt(sel.value)||0;
+  const r2=nonRef[idx]; if(!r2) return;
 
-  const cC = computeCost(tanq2,prod2,lh2,p.dias,p.relevos,p.horas,p.c_agua,p.c_deter,p.c_abrill,p.c_elec,p.deltaT,p.gr_deter,p.gr_abrill);
-  const cestas_ref = cC.cestas_año;
-  const ah_agua  = (cC.e_agua/cestas_ref  - cN.e_agua/cN.cestas_año)  * cestas_ref;
-  const ah_deter = (cC.e_deter/cestas_ref - cN.e_deter/cN.cestas_año) * cestas_ref;
-  const ah_abrill= (cC.e_abrill/cestas_ref- cN.e_abrill/cN.cestas_año)* cestas_ref;
-  const ah_elec  = (cC.e_elec/cestas_ref  - cN.e_elec/cN.cestas_año)  * cestas_ref;
-  const ah_total = ah_agua+ah_deter+ah_abrill+ah_elec;
-  const ah_cesta = ah_total / cestas_ref;
-  const pvp_nuevo_neto = getV('pvp_nuevo')*(1-dto_fagor);
-  const hasPrices = pvp_nuevo_neto > 0 && pvp2_neto !== null;
-  const sobrecoste = hasPrices ? pvp_nuevo_neto - pvp2_neto : null;
-  const roi = sobrecoste !== null && ah_total > 0 ? sobrecoste/ah_total : Infinity;
+  const cc=r2.cost.cestas, crRef=cRef.cestas;
+  const ah_agua=(r2.cost.e_agua/cc-cRef.e_agua/crRef)*crRef;
+  const ah_deter=(r2.cost.e_deter/cc-cRef.e_deter/crRef)*crRef;
+  const ah_abrill=(r2.cost.e_abrill/cc-cRef.e_abrill/crRef)*crRef;
+  const ah_elec=(r2.cost.e_elec/cc-cRef.e_elec/crRef)*crRef;
+  const ah_total=ah_agua+ah_deter+ah_abrill+ah_elec;
+  const ah_cesta=ah_total/crRef;
+  const hasPrices=r2.pvpNeto!==null&&rows[0].pvpNeto>0;
+  const sobrecoste=hasPrices?rows[0].pvpNeto-r2.pvpNeto:null;
+  const roi=sobrecoste!==null&&ah_total>0?sobrecoste/ah_total:Infinity;
 
-  const pc = v => v>=0?'pos':'neg';
-  setM('r_ahorro_total', fmt(ah_total,0)+' €', pc(ah_total));
-  setM('r_ahorro_cesta', fmt(ah_cesta,4)+' €', pc(ah_cesta));
-  setM('r_sobrecoste', hasPrices ? fmt(sobrecoste,0)+' €' : '—', '');
-  setM('r_roi', hasPrices&&isFinite(roi)&&roi>0 ? fmtROI(roi) : (hasPrices&&roi<=0?'< 0':'—'), '');
-  setR('d_agua', ah_agua); setR('d_deter', ah_deter); setR('d_abrill', ah_abrill); setR('d_elec', ah_elec); setR('d_total', ah_total);
-}
-
-/* ═══════════════════════════════════════════════
-   ROI FORMATTER — years + months
-═══════════════════════════════════════════════ */
-function fmtROI(years) {
-  const y = Math.floor(years);
-  const m = Math.round((years - y) * 12);
-  const yr = y === 1 ? t('roi_years') : t('roi_years_pl');
-  const mo = m === 1 ? t('roi_months') : t('roi_months_pl');
-  if (y === 0) return m + ' ' + mo;
-  if (m === 0) return y + ' ' + yr;
-  return y + ' ' + yr + ' ' + t('roi_and') + ' ' + m + ' ' + mo;
+  const pc=v=>v>=0?'pos':'neg';
+  setVal('d-ahorro-total',fmt(ah_total,0)+' €',pc(ah_total));
+  setVal('d-ahorro-cesta',fmt(ah_cesta,4)+' €',pc(ah_cesta));
+  setVal('d-sobrecoste',hasPrices?fmt(sobrecoste,0)+' €':'—','');
+  setVal('d-roi',hasPrices&&isFinite(roi)&&roi>0?fmtROI(roi):(hasPrices&&roi<=0?'< 0':'—'),'');
+  setDiff('dd-agua',ah_agua); setDiff('dd-deter',ah_deter);
+  setDiff('dd-abrill',ah_abrill); setDiff('dd-elec',ah_elec); setDiff('dd-total',ah_total);
 }
 
 /* ═══════════════════════════════════════════════
    ICEBERG
 ═══════════════════════════════════════════════ */
-function renderIceberg(cN, pvp_nuevo_neto) {
-  const section = $('iceberg_section');
-  if (!pvp_nuevo_neto || pvp_nuevo_neto <= 0) { section.style.display='none'; return; }
-  section.style.display = 'block';
+function renderIceberg(cost,pvpNeto){
+  const sec=$('iceberg-section');
+  if(!pvpNeto||pvpNeto<=0){ sec.style.display='none'; return; }
+  sec.style.display='block';
 
-  const years = 10;
-  const inv   = pvp_nuevo_neto;
-  const agua10   = cN.e_agua   * years;
-  const elec10   = cN.e_elec   * years;
-  const quim10   = (cN.e_deter + cN.e_abrill) * years;
-  const total10  = inv + agua10 + elec10 + quim10;
+  const inv=pvpNeto, agua10=cost.e_agua*10, elec10=cost.e_elec*10, quim10=(cost.e_deter+cost.e_abrill)*10;
+  const total10=inv+agua10+elec10+quim10;
 
-  const items = [
-    {label:t('ice_inv'),  val:inv,    color:'#1d4ed8', visible:true},
-    {label:t('ice_elec'), val:elec10, color:'#f59e0b', visible:false},
-    {label:t('ice_agua'), val:agua10, color:'#06b6d4', visible:false},
-    {label:t('ice_quim'), val:quim10, color:'#8b5cf6', visible:false},
+  const items=[
+    {key:'ice_inv', val:inv,   color:'#1a1a1a', visible:true},
+    {key:'ice_elec',val:elec10,color:'#595959', visible:false},
+    {key:'ice_agua',val:agua10,color:'#999999', visible:false},
+    {key:'ice_quim',val:quim10,color:'#c4c4c4', visible:false},
   ];
 
   // Legend
-  const legend = $('iceberg_legend');
-  legend.innerHTML = `
-    <div style="margin-bottom:10px">
-      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">${t('ice_total')} ${fmt(total10,0)} €</div>
-    </div>
-    ${items.map(it=>`
-      <div class="iceberg-item">
-        <div class="iceberg-dot" style="background:${it.color}"></div>
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.04em">${it.visible?t('ice_visible'):t('ice_oculto')}</div>
-          <div class="iceberg-item-label">${it.label}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="iceberg-item-val">${fmt(it.val,0)} €</div>
-          <div class="iceberg-item-pct">${((it.val/total10)*100).toFixed(1)}%</div>
-        </div>
-      </div>`).join('')}
-    <div style="margin-top:10px;padding-top:8px;border-top:2px solid var(--gray-200)">
-      <div style="font-size:11px;color:var(--gray-400)">💡 ${((( elec10+agua10+quim10)/total10)*100).toFixed(0)}% ${t('ice_insight')}</div>
+  const legend=$('iceberg-legend');
+  legend.innerHTML=`
+    <div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem">${t('ice_total')}: ${fmt(total10,0)} €</div>
+    ${items.map(it=>`<div class="ice-item">
+      <div class="ice-dot" style="background:${it.color}"></div>
+      <div style="flex:1">
+        <div class="ice-sublbl">${it.visible?t('ice_visible'):t('ice_hidden')}</div>
+        <div class="ice-lbl">${t(it.key)}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="ice-val">${fmt(it.val,0)} €</div>
+        <div class="ice-pct">${((it.val/total10)*100).toFixed(1)}%</div>
+      </div>
+    </div>`).join('')}
+    <div style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--gray-100);font-size:11px;color:var(--gray-400)">
+      ${((agua10+elec10+quim10)/total10*100).toFixed(0)}% ${t('ice_insight')}
     </div>`;
 
-  drawIceberg(items, total10);
+  drawIceberg(items,total10,inv);
 
-  // Gasto por cesta
-  const gasto_cesta = (cN.e_agua + cN.e_elec + cN.e_deter + cN.e_abrill) / cN.cestas_año;
-  $('gasto_cesta_val').textContent = fmt(gasto_cesta, 4);
+  const gastoCesta=(cost.e_agua+cost.e_elec+cost.e_deter+cost.e_abrill)/cost.cestas;
+  const gcEl=$('gasto-cesta-val'); if(gcEl) gcEl.textContent=fmt(gastoCesta,4);
 }
 
-function drawIceberg(items, total) {
-  const canvas = $('iceberg_canvas'); if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+function drawIceberg(items,total,inv){
+  const canvas=$('iceberg-canvas'); if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
   ctx.clearRect(0,0,W,H);
 
-  // Water line at 28% from top
-  const waterY = H * 0.28;
+  const waterY=H*0.3;
+  const midX=W/2;
 
-  // Sky
-  ctx.fillStyle = '#eff6ff';
-  ctx.fillRect(0,0,W,waterY);
+  // Sky gradient
+  const skyGrad=ctx.createLinearGradient(0,0,0,waterY);
+  skyGrad.addColorStop(0,'#f7f7f7'); skyGrad.addColorStop(1,'#ebebeb');
+  ctx.fillStyle=skyGrad; ctx.fillRect(0,0,W,waterY);
 
-  // Water
-  ctx.fillStyle = '#bfdbfe';
-  ctx.fillRect(0,waterY,W,H-waterY);
+  // Water gradient
+  const waterGrad=ctx.createLinearGradient(0,waterY,0,H);
+  waterGrad.addColorStop(0,'#d0d0d0'); waterGrad.addColorStop(1,'#b0b0b0');
+  ctx.fillStyle=waterGrad; ctx.fillRect(0,waterY,W,H-waterY);
 
   // Water line
-  ctx.strokeStyle = '#3b82f6'; ctx.lineWidth=2; ctx.setLineDash([6,3]);
+  ctx.strokeStyle='#888'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
   ctx.beginPath(); ctx.moveTo(0,waterY); ctx.lineTo(W,waterY); ctx.stroke();
   ctx.setLineDash([]);
 
-  // Label water line
-  ctx.fillStyle='#3b82f6'; ctx.font='bold 10px system-ui'; ctx.textAlign='right';
-  ctx.fillText('Nivel del agua',W-8,waterY-5);
+  // Water line label
+  ctx.fillStyle='#888'; ctx.font='600 9px Inter,system-ui'; ctx.textAlign='right';
+  ctx.fillText('NIVEL DEL AGUA',W-6,waterY-5);
 
-  // Draw segments
-  const inv_pct  = items[0].val / total;
-  const rest_pct = 1 - inv_pct;
-
-  // Above water: investment (trapezoid pointing up)
-  const aboveH = waterY - 20;
-  const midX = W/2;
-  ctx.fillStyle = items[0].color + 'cc';
+  // Above water — investment (triangle shape)
+  const invPct=inv/total;
+  const aboveH=waterY-16;
+  const aboveW=aboveH*0.55;
+  ctx.fillStyle='#1a1a1a';
   ctx.beginPath();
-  ctx.moveTo(midX - aboveH*0.3, waterY);
-  ctx.lineTo(midX + aboveH*0.3, waterY);
-  ctx.lineTo(midX + 20, 20);
-  ctx.lineTo(midX - 20, 20);
-  ctx.closePath();
-  ctx.fill();
+  ctx.moveTo(midX,10);
+  ctx.lineTo(midX+aboveW,waterY);
+  ctx.lineTo(midX-aboveW,waterY);
+  ctx.closePath(); ctx.fill();
 
   // Label above
-  ctx.fillStyle='#ffffff'; ctx.font='bold 11px system-ui'; ctx.textAlign='center';
-  ctx.fillText(items[0].label, midX, waterY-aboveH/2+4);
-  ctx.font='12px system-ui';
-  ctx.fillText(`${(inv_pct*100).toFixed(0)}%`, midX, waterY-aboveH/2+18);
+  ctx.fillStyle='#fff'; ctx.font='700 10px Inter,system-ui'; ctx.textAlign='center';
+  ctx.fillText(t('ice_inv'),midX,waterY-aboveH/2+2);
+  ctx.font='600 11px Inter,system-ui';
+  ctx.fillText((invPct*100).toFixed(0)+'%',midX,waterY-aboveH/2+16);
 
-  // Below water: 3 segments stacked
-  const belowH = H - waterY - 20;
-  const belowItems = items.slice(1);
-  let yOff = waterY;
-  belowItems.forEach((it,i) => {
-    const pct = it.val/total;
-    const segH = belowH * (pct / rest_pct);
-    const expand = i * 15;
-    const w1 = aboveH*0.3*2 + expand;
-    const w2 = aboveH*0.3*2 + expand + 15;
-    ctx.fillStyle = it.color + 'bb';
+  // Below water — stacked segments widening downward
+  const belowItems=items.slice(1);
+  const belowTotal=1-invPct;
+  let yOff=waterY;
+  const baseW=aboveW;
+  belowItems.forEach((it,i)=>{
+    const pct=it.val/total;
+    const segH=(H-waterY-8)*(pct/belowTotal);
+    const w1=baseW+i*18;
+    const w2=baseW+(i+1)*18;
+    ctx.fillStyle=it.color;
     ctx.beginPath();
-    ctx.moveTo(midX - w1/2, yOff);
-    ctx.lineTo(midX + w1/2, yOff);
-    ctx.lineTo(midX + w2/2, yOff + segH);
-    ctx.lineTo(midX - w2/2, yOff + segH);
-    ctx.closePath();
-    ctx.fill();
-    // label
-    if (segH > 18) {
-      ctx.fillStyle='#ffffff'; ctx.font='bold 10px system-ui'; ctx.textAlign='center';
-      ctx.fillText(it.label.split(' ')[0]+' '+`${(pct*100).toFixed(0)}%`, midX, yOff+segH/2+4);
+    ctx.moveTo(midX-w1,yOff); ctx.lineTo(midX+w1,yOff);
+    ctx.lineTo(midX+w2,yOff+segH); ctx.lineTo(midX-w2,yOff+segH);
+    ctx.closePath(); ctx.fill();
+    // Separator line
+    ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=0.5; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(midX-w1,yOff); ctx.lineTo(midX+w1,yOff); ctx.stroke();
+    if(segH>16){
+      const textColor=i<2?'#fff':'#555';
+      ctx.fillStyle=textColor; ctx.font='600 9px Inter,system-ui'; ctx.textAlign='center';
+      ctx.fillText((pct*100).toFixed(0)+'%',midX,yOff+segH/2+4);
     }
-    yOff += segH;
+    yOff+=segH;
   });
 }
 
 /* ═══════════════════════════════════════════════
-   DISTRIBUTOR PRINT
+   WATER MODE
 ═══════════════════════════════════════════════ */
-function updateDistPrint() {
-  const nombre  = $('dist_nombre')?.value  || '—';
-  const contacto= $('dist_contacto')?.value|| '—';
-  const email   = $('dist_email')?.value   || '—';
-  const fecha   = $('dist_fecha')?.value   || '—';
-  const pais    = $('sel_pais')?.value     || '—';
-  const dto     = $('dto_fagor')?.value    || '50';
-  $('dist_info_print').innerHTML = `
-    <div class="fld"><label>Distribuidor</label><div style="font-weight:600">${nombre}</div></div>
-    <div class="fld"><label>Contacto</label><div style="font-weight:600">${contacto}</div></div>
-    <div class="fld"><label>Email / Teléfono</label><div style="font-weight:600">${email}</div></div>
-    <div class="fld"><label>País</label><div style="font-weight:600">${pais}</div></div>
-    <div class="fld"><label>Descuento Fagor</label><div style="font-weight:600">${dto}%</div></div>
-    <div class="fld"><label>Fecha</label><div style="font-weight:600">${fecha}</div></div>`;
-  $('dist_print_wrap').style.display = nombre!=='—'||fecha!=='—' ? 'block' : 'none';
-}
-
-function printReport() {
-  updateDistPrint();
-  $('dist_print_wrap').classList.add('print-only');
-  window.print();
+function setWater(mode){
+  waterMode=mode;
+  $('btn-hot').className='tg-btn'+(mode==='hot'?' on':'');
+  $('btn-cold').className='tg-btn'+(mode==='cold'?' on':'');
+  calc();
 }
 
 /* ═══════════════════════════════════════════════
-   I18N — TRANSLATIONS
+   PRINT
 ═══════════════════════════════════════════════ */
-let currentLang = 'es';
-
-const TRANSLATIONS = {
-  es: {
-    header_title:'Calculadora ROI — Fagor Industrial',
-    header_sub:'Comparativa de ahorro operativo y análisis de retorno de inversión',
-    sec_pais:'País y distribuidor', lbl_pais:'País del cliente',
-    lbl_tarifa_aplicada:'Tarifa aplicada', lbl_dto_fagor:'Descuento Fagor (%)',
-    note_dto_fagor:'Base: 50%. Acepta decimales.',
-    lbl_dist_nombre:'Nombre distribuidor', lbl_contacto:'Contacto',
-    lbl_email:'Email / Teléfono', lbl_fecha:'Fecha',
-    sec_costes:'Costes unitarios', lbl_agua:'Agua (€/l)',
-    lbl_elec:'Electricidad (€/kWh)', lbl_deter:'Detergente (€/kg)',
-    lbl_abrill:'Abrillantador (€/kg)',
-    sec_uso:'Uso del equipo', lbl_dias:'Días / año',
-    lbl_relevos:'Relevos / día', lbl_horas:'Horas / relevo',
-    lbl_agua_feed:'Alimentación de agua',
-    btn_hot:'♨️ Caliente (55°)', btn_cold:'❄️ Fría (25°)',
-    sec_params:'Parámetros técnicos', lbl_solo_master:'Definido por el administrador',
-    lbl_t_aclarado:'Tª aclarado (°C)', lbl_t_cal:'Tª agua caliente (°C)',
-    lbl_t_fria:'Tª agua fría (°C)', lbl_gr_deter:'Detergente (gr/l)',
-    lbl_gr_abrill:'Abrillantador (gr/l)',
-    sec_tabla:'TABLA COMPARATIVA COMPLETA',
-    h3_ref_fagor:'Modelo de referencia Fagor',
-    lbl_modelo_fagor:'Modelo Fagor', lbl_pvp_tarifa:'PVP tarifa (€)',
-    lbl_pvp_neto:'Precio neto con descuento (€)',
-    h3_fagor_extra:'Añadir más modelos Fagor',
-    btn_add_fagor:'+ Añadir modelo Fagor',
-    h3_comp:'Competidores', btn_add_comp:'+ Añadir competidor',
-    h3_resultados:'Resultados comparativos',
-    note_comp:'(1) Indica cuánto más caro o barato es operar el equipo de Fagor nuevo vs competidor. Un valor positivo (verde) significa que el Fagor nuevo es más económico de operar.',
-    col_equipo:'Equipo', col_tanque:'Tanque (l)', col_prod:'Prod. (cestas/h)',
-    col_agua_lh:'Agua (l/h)', col_pvp_neto:'PVP neto (€)',
-    col_coste_cesta:'Coste oper./cesta (€)',
-    col_ahorro:'Ahorro Fagor nuevo vs competidor (€/año) (1)',
-    col_sobrecoste:'Sobrecoste Fagor (€)', col_roi:'ROI',
-    sec_iceberg:'ICEBERG MODELO DE REFERENCIA — 10 AÑOS',
-    iceberg_desc:'Desglose del coste total de propiedad durante los primeros 10 años. La parte visible (inversión) y lo que queda bajo el agua (operación).',
-    lbl_gasto_cesta:'Gasto operativo por cesta (energía + agua + químico):',
-    lbl_eur_cesta:'€/cesta',
-    sec_comparativa:'COMPARATIVA: MODELO REFERENCIA FAGOR VS SELECCIONADO',
-    lbl_modelo_ref:'Modelo de referencia', lbl_modelo_sel:'Modelo seleccionado para comparar',
-    mlbl_ahorro_total:'Ahorro anual total', msub_eur_year:'€/año',
-    mlbl_ahorro_cesta:'Ahorro por cesta', mlbl_dif_precio:'Diferencia precio neto',
-    mlbl_roi:'Payback (ROI)', msub_years:'años',
-    h3_desglose:'Desglose del ahorro anual',
-    lbl_agua_lbl:'Agua', lbl_deter_lbl:'Detergente',
-    lbl_abrill_lbl:'Abrillantador', lbl_elec_lbl:'Electricidad', lbl_total:'Total',
-    btn_print:'🖨️ Imprimir informe',
-    // iceberg legend
-    ice_inv:'Inversión (precio neto)', ice_elec:'Energía (10 años)',
-    ice_agua:'Agua (10 años)', ice_quim:'Químicos (10 años)',
-    ice_total:'Coste total 10 años:', ice_visible:'▲ VISIBLE', ice_oculto:'▼ OCULTO',
-    ice_insight:'del coste total de propiedad está oculto en los costes operativos.',
-    // comp forms
-    comp_marca:'Marca', comp_modelo:'Modelo', comp_pvp:'PVP (€)',
-    comp_dto:'Descuento (%)', comp_dto_note:'Base: 50%. Acepta decimales.',
-    comp_tanq:'Cap. tanque (l)', comp_tanq_note:'Suma de todos los tanques de prelavado y lavado.',
-    comp_prod:'Producción máx (cestas/h)', comp_lh:'Consumo agua (l/h)',
-    fe_modelo:'Modelo', fe_pvp_tarifa:'PVP tarifa (€)', fe_pvp_neto:'Precio neto (€)',
-    // ROI
-    roi_years:'año', roi_years_pl:'años', roi_months:'mes', roi_months_pl:'meses', roi_and:'y',
-    // master bar
-    master_label_off:'Modo comercial activo', master_label_on:'Modo master activo — todos los parámetros editables',
-    btn_master_enter:'Acceso master', btn_master_ok:'Entrar', btn_master_exit:'Salir del modo master',
-  },
-  en: {
-    header_title:'ROI Calculator — Fagor Industrial',
-    header_sub:'Operational savings comparison and return on investment analysis',
-    sec_pais:'Country & distributor', lbl_pais:'Customer country',
-    lbl_tarifa_aplicada:'Applied rate', lbl_dto_fagor:'Fagor discount (%)',
-    note_dto_fagor:'Base: 50%. Decimals accepted.',
-    lbl_dist_nombre:'Distributor name', lbl_contacto:'Contact',
-    lbl_email:'Email / Phone', lbl_fecha:'Date',
-    sec_costes:'Unit costs', lbl_agua:'Water (€/l)',
-    lbl_elec:'Electricity (€/kWh)', lbl_deter:'Detergent (€/kg)',
-    lbl_abrill:'Rinse aid (€/kg)',
-    sec_uso:'Equipment usage', lbl_dias:'Days / year',
-    lbl_relevos:'Shifts / day', lbl_horas:'Hours / shift',
-    lbl_agua_feed:'Water supply',
-    btn_hot:'♨️ Hot (55°)', btn_cold:'❄️ Cold (25°)',
-    sec_params:'Technical parameters', lbl_solo_master:'Set by administrator',
-    lbl_t_aclarado:'Rinse temp (°C)', lbl_t_cal:'Hot water temp (°C)',
-    lbl_t_fria:'Cold water temp (°C)', lbl_gr_deter:'Detergent (g/l)',
-    lbl_gr_abrill:'Rinse aid (g/l)',
-    sec_tabla:'FULL COMPARISON TABLE',
-    h3_ref_fagor:'Fagor reference model',
-    lbl_modelo_fagor:'Fagor model', lbl_pvp_tarifa:'List price (€)',
-    lbl_pvp_neto:'Net price after discount (€)',
-    h3_fagor_extra:'Add more Fagor models',
-    btn_add_fagor:'+ Add Fagor model',
-    h3_comp:'Competitors', btn_add_comp:'+ Add competitor',
-    h3_resultados:'Comparison results',
-    note_comp:'(1) Shows how much more or less expensive it is to operate the competitor vs. the new Fagor. A positive value (green) means the new Fagor is cheaper to operate.',
-    col_equipo:'Equipment', col_tanque:'Tank (l)', col_prod:'Output (racks/h)',
-    col_agua_lh:'Water (l/h)', col_pvp_neto:'Net price (€)',
-    col_coste_cesta:'Oper. cost/rack (€)',
-    col_ahorro:'Fagor new vs competitor savings (€/yr) (1)',
-    col_sobrecoste:'Fagor premium (€)', col_roi:'ROI',
-    sec_iceberg:'REFERENCE MODEL ICEBERG — 10 YEARS',
-    iceberg_desc:'Total cost of ownership breakdown over the first 10 years. The visible part (investment) and what lies below the surface (operations).',
-    lbl_gasto_cesta:'Operational cost per rack (energy + water + chemicals):',
-    lbl_eur_cesta:'€/rack',
-    sec_comparativa:'COMPARISON: FAGOR REFERENCE VS SELECTED MODEL',
-    lbl_modelo_ref:'Reference model', lbl_modelo_sel:'Model to compare',
-    mlbl_ahorro_total:'Total annual savings', msub_eur_year:'€/year',
-    mlbl_ahorro_cesta:'Savings per rack', mlbl_dif_precio:'Net price difference',
-    mlbl_roi:'Payback (ROI)', msub_years:'years',
-    h3_desglose:'Annual savings breakdown',
-    lbl_agua_lbl:'Water', lbl_deter_lbl:'Detergent',
-    lbl_abrill_lbl:'Rinse aid', lbl_elec_lbl:'Electricity', lbl_total:'Total',
-    btn_print:'🖨️ Print report',
-    ice_inv:'Investment (net price)', ice_elec:'Energy (10 years)',
-    ice_agua:'Water (10 years)', ice_quim:'Chemicals (10 years)',
-    ice_total:'Total cost 10 years:', ice_visible:'▲ VISIBLE', ice_oculto:'▼ HIDDEN',
-    ice_insight:'of total cost of ownership is hidden in operational costs.',
-    comp_marca:'Brand', comp_modelo:'Model', comp_pvp:'List price (€)',
-    comp_dto:'Discount (%)', comp_dto_note:'Base: 50%. Decimals accepted.',
-    comp_tanq:'Tank capacity (l)', comp_tanq_note:'Sum of all pre-wash and wash tanks.',
-    comp_prod:'Max output (racks/h)', comp_lh:'Water consumption (l/h)',
-    fe_modelo:'Model', fe_pvp_tarifa:'List price (€)', fe_pvp_neto:'Net price (€)',
-    roi_years:'year', roi_years_pl:'years', roi_months:'month', roi_months_pl:'months', roi_and:'and',
-    master_label_off:'Commercial mode active', master_label_on:'Master mode active — all parameters editable',
-    btn_master_enter:'Master access', btn_master_ok:'Enter', btn_master_exit:'Exit master mode',
-  },
-  fr: {
-    header_title:'Calculateur ROI — Fagor Industrial',
-    header_sub:'Comparaison des économies opérationnelles et analyse du retour sur investissement',
-    sec_pais:'Pays et distributeur', lbl_pais:'Pays du client',
-    lbl_tarifa_aplicada:'Tarif appliqué', lbl_dto_fagor:'Remise Fagor (%)',
-    note_dto_fagor:'Base : 50 %. Décimales acceptées.',
-    lbl_dist_nombre:'Nom du distributeur', lbl_contacto:'Contact',
-    lbl_email:'Email / Téléphone', lbl_fecha:'Date',
-    sec_costes:'Coûts unitaires', lbl_agua:'Eau (€/l)',
-    lbl_elec:'Électricité (€/kWh)', lbl_deter:'Détergent (€/kg)',
-    lbl_abrill:'Produit de rinçage (€/kg)',
-    sec_uso:'Utilisation de l\'équipement', lbl_dias:'Jours / an',
-    lbl_relevos:'Équipes / jour', lbl_horas:'Heures / équipe',
-    lbl_agua_feed:'Alimentation en eau',
-    btn_hot:'♨️ Chaude (55°)', btn_cold:'❄️ Froide (25°)',
-    sec_params:'Paramètres techniques', lbl_solo_master:"Défini par l'administrateur",
-    lbl_t_aclarado:'T° rinçage (°C)', lbl_t_cal:'T° eau chaude (°C)',
-    lbl_t_fria:'T° eau froide (°C)', lbl_gr_deter:'Détergent (g/l)',
-    lbl_gr_abrill:'Produit de rinçage (g/l)',
-    sec_tabla:'TABLEAU COMPARATIF COMPLET',
-    h3_ref_fagor:'Modèle de référence Fagor',
-    lbl_modelo_fagor:'Modèle Fagor', lbl_pvp_tarifa:'Prix catalogue (€)',
-    lbl_pvp_neto:'Prix net après remise (€)',
-    h3_fagor_extra:'Ajouter d\'autres modèles Fagor',
-    btn_add_fagor:'+ Ajouter modèle Fagor',
-    h3_comp:'Concurrents', btn_add_comp:'+ Ajouter concurrent',
-    h3_resultados:'Résultats comparatifs',
-    note_comp:'(1) Indique combien il est plus ou moins cher d\'exploiter le concurrent vs le nouveau Fagor. Une valeur positive (verte) signifie que le nouveau Fagor est moins cher à exploiter.',
-    col_equipo:'Équipement', col_tanque:'Réservoir (l)', col_prod:'Prod. (paniers/h)',
-    col_agua_lh:'Eau (l/h)', col_pvp_neto:'Prix net (€)',
-    col_coste_cesta:'Coût oper./panier (€)',
-    col_ahorro:'Économies Fagor vs concurrent (€/an) (1)',
-    col_sobrecoste:'Surcoût Fagor (€)', col_roi:'ROI',
-    sec_iceberg:'ICEBERG MODÈLE DE RÉFÉRENCE — 10 ANS',
-    iceberg_desc:'Décomposition du coût total de possession sur les 10 premières années. La partie visible (investissement) et ce qui reste sous l\'eau (exploitation).',
-    lbl_gasto_cesta:'Coût opérationnel par panier (énergie + eau + produits) :',
-    lbl_eur_cesta:'€/panier',
-    sec_comparativa:'COMPARATIF : MODÈLE RÉFÉRENCE FAGOR VS SÉLECTIONNÉ',
-    lbl_modelo_ref:'Modèle de référence', lbl_modelo_sel:'Modèle sélectionné',
-    mlbl_ahorro_total:'Économies annuelles totales', msub_eur_year:'€/an',
-    mlbl_ahorro_cesta:'Économies par panier', mlbl_dif_precio:'Différence de prix net',
-    mlbl_roi:'Retour (ROI)', msub_years:'ans',
-    h3_desglose:'Détail des économies annuelles',
-    lbl_agua_lbl:'Eau', lbl_deter_lbl:'Détergent',
-    lbl_abrill_lbl:'Produit de rinçage', lbl_elec_lbl:'Électricité', lbl_total:'Total',
-    btn_print:'🖨️ Imprimer le rapport',
-    ice_inv:'Investissement (prix net)', ice_elec:'Énergie (10 ans)',
-    ice_agua:'Eau (10 ans)', ice_quim:'Produits chimiques (10 ans)',
-    ice_total:'Coût total 10 ans :', ice_visible:'▲ VISIBLE', ice_oculto:'▼ CACHÉ',
-    ice_insight:'du coût total de possession est caché dans les coûts opérationnels.',
-    comp_marca:'Marque', comp_modelo:'Modèle', comp_pvp:'Prix catalogue (€)',
-    comp_dto:'Remise (%)', comp_dto_note:'Base : 50 %. Décimales acceptées.',
-    comp_tanq:'Capacité réservoir (l)', comp_tanq_note:'Somme de tous les réservoirs de pré-lavage et lavage.',
-    comp_prod:'Production max (paniers/h)', comp_lh:'Consommation eau (l/h)',
-    fe_modelo:'Modèle', fe_pvp_tarifa:'Prix catalogue (€)', fe_pvp_neto:'Prix net (€)',
-    roi_years:'an', roi_years_pl:'ans', roi_months:'mois', roi_months_pl:'mois', roi_and:'et',
-    master_label_off:'Mode commercial actif', master_label_on:'Mode master actif — tous les paramètres modifiables',
-    btn_master_enter:'Accès master', btn_master_ok:'Entrer', btn_master_exit:'Quitter le mode master',
-  }
-};
-
-function t(key) {
-  return TRANSLATIONS[currentLang]?.[key] || TRANSLATIONS['es'][key] || key;
-}
-
-function setLang(lang) {
-  currentLang = lang;
-  // Update active button
-  ['es','en','fr'].forEach(l => {
-    const btn = $('lang_'+l);
-    if (btn) btn.className = 'lang-btn' + (l===lang?' active':'');
-  });
-  // Update all data-i18n elements
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    el.textContent = t(key);
-  });
-  // Re-render dynamic content that uses translated strings
-  renderCompForms();
-  renderFagorExtraForms();
-  calc();
-}
-
-
-async function reloadSheetData() {
-  const msg = $('reload_msg');
-  if (msg) { msg.textContent = 'Cargando...'; msg.style.color = 'var(--gray-500)'; }
-  const ok = await loadSheetData();
-  populatePaisSelect();
-  refreshSelects();
-  if (masterMode) renderMasterPanel();
-  calc();
-  if (msg) {
-    msg.textContent = ok ? '✅ Datos actualizados' : '❌ Error al cargar';
-    msg.style.color = ok ? 'var(--green-600)' : 'var(--red-600)';
-    setTimeout(() => { if(msg) msg.textContent = ''; }, 3000);
-  }
-}
-
-
-function scrollToComp(compId) {
-  // Ensure the comp block is visible (it always is now) and scroll to it
-  const listEl = $('comp_list');
-  if (listEl) listEl.scrollIntoView({behavior:'smooth', block:'center'});
-  // Highlight the relevant block briefly
-  const blocks = listEl?.querySelectorAll('.comp-block');
-  if (blocks) {
-    const idx = compList.findIndex(c=>c.id===compId);
-    if (blocks[idx]) {
-      blocks[idx].style.outline = '2px solid var(--blue-400)';
-      setTimeout(()=>{ blocks[idx].style.outline=''; }, 1800);
-    }
-  }
-}
-function setWater(mode) {
-  waterMode = mode;
-  $('btn_hc').className = 'tb' + (mode==='hot'?' on':'');
-  $('btn_fc').className = 'tb' + (mode==='cold'?' on':'');
-  calc();
-}
+function updatePrint(){}
 
 /* ═══════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════ */
-async function init() {
-  // Set today's date
-  const today = new Date().toISOString().split('T')[0];
-  $('dist_fecha').value = today;
+async function init(){
+  $('dist-fecha').value=new Date().toISOString().split('T')[0];
 
-  // Load data from Google Sheets
   await loadSheetData();
 
-  populatePaisSelect();
+  populatePais();
+  refreshRefSelect();
 
-  const sN = $('sel_nuevo');
-  sN.innerHTML = '';
-  MODELS.nuevo.forEach(m => { const o=new Option(m.id,m.id); sN.add(o); });
+  $('master-pwd').addEventListener('keydown',e=>{ if(e.key==='Enter') tryMaster(); });
+  $('dto-fagor').addEventListener('input',()=>{ updatePriceFromTarifa(); calc(); });
+  $('sel-pais').addEventListener('change',onPaisChange);
+  $('sel-ref').addEventListener('change',onRefModelChange);
+  $('sel-vel-ref').addEventListener('change',calc);
+  $('sel-detail').addEventListener('change',()=>calc());
 
-  $('master_pwd').addEventListener('keydown', e => { if(e.key==='Enter') tryMaster(); });
-  $('sel_nuevo').addEventListener('change', () => { updatePriceFromTarifa(); calc(); });
-  $('dto_fagor').addEventListener('input', () => {
-    updatePriceFromTarifa();
-    fagorExtraList.forEach(f=>updateFagorExtraPrice(f.id));
-    calc();
-  });
-
-  // Hidden master access: Ctrl+Shift+M reveals the master bar
-  document.addEventListener('keydown', e => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'M') {
-      const bar = $('master_bar');
-      bar.style.display = bar.style.display === 'none' ? 'flex' : 'none';
+  document.addEventListener('keydown',e=>{
+    if(e.ctrlKey&&e.shiftKey&&e.key==='M'){
+      const bar=$('master-bar');
+      bar.classList.toggle('visible');
+      if(bar.classList.contains('visible')&&!masterMode){
+        $('master-pwd').style.display='inline-block';
+        $('btn-master-enter').style.display='inline-flex';
+        setTimeout(()=>$('master-pwd').focus(),50);
+      }
     }
   });
 
-  document.querySelectorAll('input:not([type=password]):not([readonly]),select').forEach(el => {
-    el.addEventListener('change', calc);
-    el.addEventListener('input', calc);
+  document.querySelectorAll('input:not([type=password]):not([readonly]),select:not(#sel-pais):not(#sel-ref):not(#sel-vel-ref):not(#sel-detail)').forEach(el=>{
+    el.addEventListener('input',calc);
+    el.addEventListener('change',calc);
   });
 
-  onPaisChange();
   calc();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>

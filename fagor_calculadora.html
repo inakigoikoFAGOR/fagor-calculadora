@@ -520,10 +520,13 @@ function csvVal(v) {
 }
 
 function num(v) {
-  const s = csvVal(v).replace(/\./g,'').replace(',','.');
+  if (v === undefined || v === null) return 0;
+  const s = String(v).replace(/^"|"$/g,'').trim().replace(/\./g,'').replace(',','.');
   const n = parseFloat(s);
   return isNaN(n) ? 0 : n;
 }
+
+
 
 /* ── LOAD FROM GITHUB ───────────────────────────────────── */
 async function loadSheetData() {
@@ -556,6 +559,7 @@ function parseModels(csv) {
   MODELS.nuevo = []; MODELS.viejo = [];
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
+    if (!r || r.length < 8) continue;
     const ref   = csvVal(r[0]);
     const model = csvVal(r[1]);
     const pre   = num(r[2]);

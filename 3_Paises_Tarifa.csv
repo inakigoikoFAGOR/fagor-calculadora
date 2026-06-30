@@ -1,0 +1,194 @@
+﻿ID Tarifa;Continente;Pais
+E0;Africa;Algeria
+E0;Africa;Angola
+E0;Africa;Benin
+E0;Africa;Botswana
+E0;Africa;Burkina Faso
+E0;Africa;Burundi
+E0;Africa;Cape Verde
+E0;Africa;Cameroon
+E0;Africa;Chad
+E0;Africa;Comoros
+E0;Africa;Cote d'Ivoire
+E0;Africa;Egypt
+E0;Africa;Eritrea
+E0;Africa;Eswatini
+E0;Africa;Ethiopia
+E0;Africa;Gabon
+E0;Africa;Gambia
+E0;Africa;Ghana
+E0;Africa;Guinea
+E0;Africa;Guinea-Bissau
+E0;Africa;Equatorial Guinea
+E0;Africa;Kenya
+E0;Africa;Lesotho
+E0;Africa;Liberia
+E0;Africa;Libya
+E0;Africa;Madagascar
+E0;Africa;Malawi
+E0;Africa;Mali
+E0;Africa;Morocco
+E0;Africa;Mauritius
+E0;Africa;Mauritania
+E0;Africa;Mozambique
+E0;Africa;Namibia
+E0;Africa;Niger
+E0;Africa;Nigeria
+E0;Africa;Central African Republic
+E0;Africa;Republic of the Congo
+E0;Africa;Democratic Republic of the Congo
+E0;Africa;Rwanda
+E0;Africa;Sao Tome and Principe
+E0;Africa;Senegal
+E0;Africa;Seychelles
+E0;Africa;Sierra Leone
+E0;Africa;Somalia
+E0;Africa;South Africa
+E0;Africa;Sudan
+E0;Africa;South Sudan
+E0;Africa;Tanzania
+E0;Africa;Togo
+E0;Africa;Tunisia
+E0;Africa;Uganda
+E0;Africa;Djibouti
+E0;Africa;Zambia
+E0;Africa;Zimbabwe
+E0;Americas;Antigua and Barbuda
+E0;Americas;Argentina
+E0;Americas;Bahamas
+E0;Americas;Barbados
+E0;Americas;Belize
+E0;Americas;Bolivia
+E0;Americas;Brazil
+E0;Americas;Chile
+E0;Americas;Colombia
+E0;Americas;Costa Rica
+E0;Americas;Cuba
+E0;Americas;Dominica
+E0;Americas;Ecuador
+E0;Americas;El Salvador
+E0;Americas;Grenada
+E0;Americas;Guatemala
+E0;Americas;Guyana
+E0;Americas;Haiti
+E0;Americas;Honduras
+E0;Americas;Jamaica
+E0;Americas;Mexico
+E0;Americas;Nicaragua
+E0;Americas;Panama
+E0;Americas;Paraguay
+E0;Americas;Peru
+E0;Americas;Dominican Republic
+E0;Americas;Saint Kitts and Nevis
+E0;Americas;Saint Vincent and the Grenadines
+E0;Americas;Saint Lucia
+E0;Americas;Suriname
+E0;Americas;Trinidad and Tobago
+E0;Americas;Uruguay
+E0;Americas;Venezuela
+E0;Asia;Afghanistan
+E0;Asia;Saudi Arabia
+E0;Asia;Armenia
+E0;Asia;Azerbaijan
+E0;Asia;Bahrain
+E0;Asia;Bangladesh
+E0;Asia;Bhutan
+E0;Asia;Brunei
+E0;Asia;Cambodia
+E0;Asia;Qatar
+E0;Asia;China
+E0;Asia;Cyprus
+E0;Asia;North Korea
+E0;Asia;South Korea
+E0;Asia;United Arab Emirates
+E0;Asia;Philippines
+E0;Asia;Georgia
+E0;Asia;India
+E0;Asia;Indonesia
+E0;Asia;Iraq
+E0;Asia;Iran
+E0;Asia;Israel
+E0;Asia;Japan
+E0;Asia;Jordan
+E0;Asia;Kazakhstan
+E0;Asia;Kyrgyzstan
+E0;Asia;Kuwait
+E0;Asia;Laos
+E0;Asia;Lebanon
+E0;Asia;Malaysia
+E0;Asia;Maldives
+E0;Asia;Mongolia
+E0;Asia;Myanmar
+E0;Asia;Nepal
+E0;Asia;Oman
+E0;Asia;Pakistan
+E0;Asia;Palestine
+E0;Asia;Russia
+E0;Asia;Singapore
+E0;Asia;Syria
+E0;Asia;Sri Lanka
+E0;Asia;Thailand
+E0;Asia;Tajikistan
+E0;Asia;Timor-Leste
+E0;Asia;Turkmenistan
+K0;Asia;Turkey
+E0;Asia;Uzbekistan
+E0;Asia;Vietnam
+E0;Asia;Yemen
+E0;Europe;Albania
+E0;Europe;Germany
+00;Europe;Andorra
+E0;Europe;Austria
+E0;Europe;Belgium
+E0;Europe;Belarus
+E0;Europe;Bosnia and Herzegovina
+E0;Europe;Bulgaria
+E0;Europe;Croatia
+E0;Europe;Denmark
+E0;Europe;Slovakia
+E0;Europe;Slovenia
+00;Europe;Spain
+E0;Europe;Estonia
+E0;Europe;Finland
+E0;Europe;France
+E0;Europe;Greece
+E0;Europe;Hungary
+E0;Europe;Ireland
+E0;Europe;Iceland
+E0;Europe;Italy
+E0;Europe;Kosovo
+E0;Europe;Latvia
+E0;Europe;Liechtenstein
+E0;Europe;Lithuania
+E0;Europe;Luxembourg
+E0;Europe;Malta
+E0;Europe;Moldova
+E0;Europe;Monaco
+E0;Europe;Montenegro
+E0;Europe;Norway
+E0;Europe;Netherlands
+P1;Europe;Poland
+00;Europe;Portugal
+30;Europe;United Kingdom
+72;Europe;Czech Republic
+E0;Europe;Romania
+E0;Europe;San Marino
+E0;Europe;Serbia
+E0;Europe;Sweden
+E0;Europe;Switzerland
+E0;Europe;Ukraine
+E0;Europe;Vatican City
+E0;Oceania;Australia
+E0;Oceania;Fiji
+E0;Oceania;Marshall Islands
+E0;Oceania;Solomon Islands
+E0;Oceania;Kiribati
+E0;Oceania;Micronesia
+E0;Oceania;Nauru
+E0;Oceania;New Zealand
+E0;Oceania;Palau
+E0;Oceania;Papua New Guinea
+E0;Oceania;Samoa
+E0;Oceania;Tonga
+E0;Oceania;Tuvalu
+E0;Oceania;Vanuatu
